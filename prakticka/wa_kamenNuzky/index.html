@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <p id="vyherci">Výherci</p>
+    <p id="skoreUzivate">{{uzivatelBody}}</p>
+    <p id="skoreRobota">{{robotBody}}</p>
+
+    <button id="kamen">Kamen</button>
+    <button id="nuzky">Nuzky</button>
+    <button id="papir">Papir</button>
+
+    <script>
+        
+        let uzivatelBody;
+        let robotBody;
+
+        localStorage.getItem("uzivatelBody", uzivatelBody);
+        localStorage.getItem("robotBody", robotBody);
+        
+        const ruceRobota = ["kamen", "nuzky", "papir"];
+
+
+        document.getElementById("kamen").onclick = function() {
+            let robotVyber;
+            let clovekVyber;
+            let index;
+            
+            let vyhernyBodyUzivatel;
+            let vyhernyBodyRobot;
+        
+            index = Math.floor(Math.random() * ruceRobota.length);
+            robotVyber = ruceRobota[index];
+
+            clovekVyber = "kamen";
+            if (vyhernyBodyRobot == 2) {
+                robotBody+1;
+            }
+            else if (vyhernyBodyUzivatel == 2){
+                uzivatelBody+1;
+            }
+            if (clovekVyber = "kamen" && robotVyber == "papir") {
+                document.getElementById("vyherci").textContent = "Prohral jsi"
+                vyhernyBodyRobot+1;
+            }
+            else if (clovekVyber = "kamen" && robotVyber == "nuzky") {
+                document.getElementById("vyherci").textContent = "Vyhral jsi";
+                vyhernyBodyUzivatel+1;
+            }
+            else if (clovekVyber = "kamen" && robotVyber == "kamen") {
+                document.getElementById("vyherci").textContent = "Remiza";
+            }
+            console.log(robotVyber);
+        }
+        
+        localStorage.setItem("uzivatelBody", uzivatelBody);
+        localStorage.setItem("robotBody", robotBody);
+
+    </script>
+    
+</body>
+</html>

@@ -1,1 +1,30 @@
 01 - Personal identification.txt
+
+#ignore .env files
+.env
+.env.*
+!.env.example
+
+#ignore node_modules
+node_modules
+
+#ignore .idea files
+.idea
+
+#ignore logs
+logs
+
+#ignore build files
+dist
+build
+
+#ignore vscode files
+.vscode
+
+# Zlaty standard prompt a zdrojove vypisky
+ZLATY_STANDARD_PROMPT.md
+**/DOCX/
+**/Random/
+**/*.docx
+**/*.doc
+**/*.pdf

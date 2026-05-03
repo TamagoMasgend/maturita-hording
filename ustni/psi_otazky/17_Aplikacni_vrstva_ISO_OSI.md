@@ -1,0 +1,39 @@
+# 17. Aplikační vrstva modelu ISO/OSI
+
+## Účel a pozice v referenčním modelu
+Aplikační vrstva (Application Layer) představuje absolutní vrchol, tedy 7. vrstvu modelu ISO/OSI (v praxi TCP/IP se slučuje s vrstvami 5 a 6). Její funkcí není vykreslovat grafické uživatelské rozhraní (GUI) na monitor, jak se často mylně interpretuje, nýbrž poskytovat standardizované **síťové služby a API protokoly**, o které se samotné lokální aplikace (webové prohlížeče, e-mailoví klienti, databáze) mohou opřít, pokud potřebují komunikovat přes síť. 
+
+Aplikační vrstva inicializuje komunikaci a definuje striktní sémantiku zpráv (kdo začíná, formát dotazu, formát odpovědi). Je jedinou vrstvou, se kterou uživatel prostřednictvím softwaru nepřímo, leč vědomě manipuluje. Komunikace na této vrstvě probíhá výhradně v režimu logického end-to-end dialogu přes síťové porty uvolněné vrstvou transportní.
+
+## Jmenné a konfigurační služby sítě
+K zajištění automatizovaného chodu rozlehlých sítí bez nutnosti manuálních zásahů do registrů se využívají podpůrné infrastrukturní protokoly.
+
+- **DNS (Domain Name System)**: Distribuovaný, hierarchický databázový systém nezbytný pro chod Internetu (pracuje převážně přes rychlé UDP na portu 53). Zajišťuje překlad (rezoluci) lidsky čitelných doménových jmen (např. `www.google.com`) na strojově zpracovatelné IP adresy (např. `142.250.190.46`), což je podmínkou pro sestavení L3 paketů. Struktura DNS je striktně stromová: na vrcholu je Root (kořen), pod ním domény nejvyššího řádu – TLD (generické `.com`, národní `.cz`), následované doménami 2. a 3. řádu. Z inženýrského hlediska klient odešle DNS dotaz a lokální rekurzivní resolver musí iterativně projít hierarchií od Root serveru přes autoritativní servery, dokud nezíská tzv. A záznam (pro IPv4) nebo AAAA záznam (pro IPv6).
+- **DHCP (Dynamic Host Configuration Protocol)**: Protokol architektury klient-server využívaný k automatické alokaci IP konfigurace uzlům v síti. Klient po zapnutí sítě vysílá na portu 67 masivní L2/L3 Broadcast (zprávu DHCP Discover), na který reaguje DHCP server (port 68). Server klientovi automatizovaně "pronajme" volnou IP adresu z definovaného bloku (tzv. scope/pool), masku sítě, adresu Default Gateway a adresu DNS resolveru. Správce může alokovat adresy dynamicky (s časově omezeným pronájmem – Lease Time), nebo staticky (vázáním konkrétní IP na zjištěnou MAC adresu daného zařízení).
+
+## Protokoly služby World Wide Web
+Služba WWW se opírá o distribuci hypertextových dokumentů, které jsou staticky uloženy či dynamicky generovány webovými servery a zobrazovány klienty. Identifikátorem konkrétního zdroje je **URL (Uniform Resource Locator)**, řetězec definující přístupový protokol (http/https), plně kvalifikované doménové jméno (FQDN), cestu ke složce na serveru a předávané parametry (query string).
+
+- **HTTP (HyperText Transfer Protocol)**: Bezstavový, textový transportní protokol pracující nativně nad spolehlivým TCP spojením na **portu 80**. Bezstavovost znamená, že si server nepamatuje předchozí komunikaci s klientem (tuto bariéru u moderních e-shopů řeší injektování souborů Cookies). Komunikace se skládá z hlavičky (obsahující stav a metadata) a těla s HTML/JSON daty. 
+  - **Dotazovací metody**: Klient neposílá pouze žádosti o čtení přes příkaz `GET`, ale moderní REST API využívá metody `POST` (odeslání nových dat/formulářů), `PUT` (aktualizace dat) a `DELETE` (smazání obsahu na serveru).
+  - **Stavové kódy (Status Codes)**: Server odpovídá tříciferným kódem o výsledku. Rodina **2xx** značí úspěch (200 OK), rodina **3xx** zajišťuje přesměrování (301 Moved Permanently), rodina **4xx** hlásí chybu na straně klienta (403 Forbidden, 404 Not Found) a rodina **5xx** indikuje těžké selhání aplikační logiky na straně serveru (500 Internal Server Error, 502 Bad Gateway).
+- **HTTPS (HTTP Secure)**: Pro komerční nasazení nezbytný standard běžící na **portu 443**. Jde o čisté HTTP, jehož datový tok byl převeden z prostého textu (Plaintext) do asymetricky a symetricky šifrovaného tunelu, který se opírá o certifikáty a protokol TLS z nižší prezentační vrstvy.
+
+## Protokol pro přenos souborů (FTP)
+**FTP (File Transfer Protocol)** je robustní starší protokol architektury klient-server (používající transport přes TCP) určený primárně k masivní a spolehlivé výměně objemných dat bez závislosti na operačním systému. Oproti ostatním protokolům využívá inženýrskou anomálii – **dvě oddělená spojení**.
+- **Řídicí spojení (Control Connection)**: Probíhá trvale na **portu 21**. Slouží k ověření loginu, hesla a k zasílání ASCII textových příkazů (např. změna složky, smazání souboru).
+- **Datové spojení (Data Connection)**: Operuje na **portu 20** (v aktivním režimu) a otevírá se jen na dobu nezbytnou k přenosu surového obsahu samotného souboru, jež lze přenášet binárně (bit na bit) nebo textově (s převodem znaků konce řádku u jiných OS).
+
+Z důvodu bezpečnosti a přítomnosti NATu u klientů se FTP dělí na **Aktivní režim** (kde server aktivně otevírá spojení kamsi zpět na klienta pro přenos dat, což často blokují firewally) a mnohem nasazovanější **Pasivní režim**, kde klient otevírá obě spojení směrem k serveru. Surové FTP přenáší i hesla v čistém textu, moderním průmyslovým standardem jsou proto bezpečné šifrované varianty **FTPS** a **SFTP**.
+
+## Architektura Elektronické pošty
+Komplexní systém e-mailové výměny vyžaduje spolupráci hned několika asynchronních aplikačních protokolů a softwarových démonů. Běžný poštovní klient (MS Outlook, Thunderbird) se v síťařině odborně označuje jako **MUA (Mail User Agent)**. Zprávy po trase na internetu fyzicky předávají a třídí obří mail servery zvané **MTA (Mail Transfer Agent)**. Adresace probíhá fixně formátem `local_part@domain.tld`.
+
+- **SMTP (Simple Mail Transfer Protocol)**: Protokol určený exkluzivně pro **odesílání zpráv**. Nasazený historicky na **portu 25**, v moderní šifrované formě (TLS/SSL) komunikuje na portech **465 nebo 587**. MUA klienta předá e-mail svému lokálnímu serveru přes SMTP a následně MTA servery napříč kontinenty předávají zprávu formou štafety (Relay) opět přes SMTP, dokud nedorazí na server koncového příjemce.
+- Protokoly pro **stahování a čtení zpráv**, kdy si klient MUA vyzvedává doručenou poštu z finálního MTA serveru:
+  - **POP3 (Post Office Protocol v3)**: Komunikuje primárně na **portu 110** (zabezpečeně **995**). Je založen na jednorázovém principu: klient se připojí, masivně si stáhne všechny nově příchozí e-maily k sobě na lokální pevný disk (HDD/SSD) a na straně poštovního serveru je nenávratně smaže. Umožňuje plné offline čtení, avšak limituje používání více zařízení (PC, mobil).
+  - **IMAP (Internet Message Access Protocol)**: Modernější standard operující na **portu 143** (zabezpečeně **993**). Ponechává veškerou databázi e-mailů permanentně uloženou na straně poštovního serveru a klientský MUA software tvoří pouze "zrcadlo" (synchronizuje hlavičky a obsahy přes trvalé online spojení). Ideální řešení pro správu jedné schránky z více zařízení současně.
+
+## Adresářové služby a vzdálená správa
+- **LDAP (Lightweight Directory Access Protocol)**: Pracuje na portu **389** (zabezpečeně **636**). Jedná se o síťový protokol pro rychlý, centralizovaný přístup k masivním adresářovým stromovým databázím. Uchovává a distribuuje centrální informace o všech uživatelích v organizaci (loginy, oddělení), právech, počítačích a zásadách bezpečnosti. Typickým podnikovým nasazením LDAPu je gigantický systém Active Directory (AD) od Microsoftu.
+- **Telnet (Teletype Network)**: Komunikuje na **portu 23**. Poskytuje obousměrnou textovou interaktivní relaci s terminálem na dálku ovládaného hardwaru (např. management Cisco routeru). Protože Telnet odesílá veškeré vstupy i hesla jako čistý nešifrovaný text, byl v průběhu let z bezpečnostních důvodů globálně zavržen a stoprocentně nahrazen kryptografickým protokolem **SSH (Secure Shell na portu 22)**.

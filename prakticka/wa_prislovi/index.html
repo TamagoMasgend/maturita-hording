@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p id="prislovi-vytahnuty">Jebati</p>
+    <p id="prislovi-vytahnuty-dvakrat">Jebati</p>
+
+    <button id="prislov-1"> Nahodne prislovi jednou </button>
+    <button id="prislov-2"> Nahodne prislovi dvakrat </button>
+    <hr>
+    <input type="text" id="field-pro-prislovi" placeholder="Tady zadejte prislovi">
+    <button id="vlozit-prislovi"> Vlozit prislovi </button>
+
+    <script>
+
+        let prislovi = JSON.parse(localStorage.getItem("ulozena-prislovi")) || ["Kdo do lesa volá, sežero ho medvěd", "Kdo jámu kopá, tělo shovává", "Jsem jen kokot"];
+
+        document.getElementById("prislov-1").onclick = function()   {
+            let index = Math.floor(Math.random() * prislovi.length);
+            document.getElementById("prislovi-vytahnuty").textContent = prislovi[index];
+        }
+
+        document.getElementById("prislov-2").onclick = function()   {
+            let index = Math.floor(Math.random() * prislovi.length);
+            let index2 = Math.floor(Math.random() * prislovi.length);
+            document.getElementById("prislovi-vytahnuty-dvakrat").textContent = prislovi[index] + " ---- " + prislovi[index2];
+        }
+
+        document.getElementById("vlozit-prislovi").onclick = function(){
+
+            let grabnutePrislovi = document.getElementById("field-pro-prislovi").value;
+            if (grabnutePrislovi != ""){
+                prislovi.push(grabnutePrislovi);
+                localStorage.setItem("ulozena-prislovi", JSON.stringify(prislovi))
+                document.getElementById("field-pro-prislovi").value = "";
+            }
+        }
+        
+    </script>
+</body>
+</html>
