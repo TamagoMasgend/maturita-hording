@@ -62,7 +62,7 @@ Ergonomie hraje zásadní roli v prevenci syndromu karpálního tunelu, proto ex
 
 Skener je zařízení určené k převodu plošných předloh (papírové dokumenty, fotografie, negativy) do digitální rastrové podoby. Proces digitalizace probíhá pomocí lineárního snímače, který se mechanicky pohybuje pod skleněnou deskou a snímá odražené světlo z osvětlené předlohy pomocí kmitající nebo posuvné hlavy. Klíčovým parametrem je optické rozlišení (v DPI), hloubka barev a dynamický rozsah snímače, přičemž volba technologie snímače zásadně ovlivňuje tloušťku zařízení, energetickou náročnost a výslednou kvalitu obrazových detailů.
 
-V současnosti jsou samostatné skenery vytlačovány multifunkčními zařízeními, ale pro archivaci fotografií nebo digitalizaci filmů zůstávají dedikované stroje nenahraditelné díky své přesnosti a hloubce barevného podání. Pokročilé systémy digitalizace využívají i technologii skenování pomocí digitálních kamer (Camera Scanning), která je výrazně rychlejší u velkých objemů dokumentů nebo historických knih.
+Aktuálně jsou samostatné skenery vytlačovány multifunkčními zařízeními, ale pro archivaci fotografií nebo digitalizaci filmů zůstávají dedikované stroje nenahraditelné díky své přesnosti a hloubce barevného podání. Pokročilé systémy digitalizace využívají i technologii skenování pomocí digitálních kamer (Camera Scanning), která je výrazně rychlejší u velkých objemů dokumentů nebo historických knih.
 
 ### Technologie snímačů
 - **CCD (Charge-Coupled Device):** využívá soustavu zrcadel a čoček k přenesení obrazu na malý čip, nabízí vysokou kvalitu, velkou hloubku ostrosti a věrné podání barev.

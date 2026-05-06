@@ -27,7 +27,7 @@ Protokol poskytující **nespolehlivou a nespojovanou službu**. Neprovádí han
 ## Relační vrstva (5. vrstva)
 Relační vrstva (Session Layer) formálně řídí logický dialog mezi aplikacemi. Zabezpečuje korektní zahájení relace (session), průběžnou synchronizaci probíhající komunikace a ladné ukončování, aby nedošlo k poškození dat při náhlém výpadku.
 - **Řízení dialogu**: Určuje režim toku (kdo má momentálně vysílat u half-duplex komunikace).
-- **Synchronizační body**: Při přenosu obřích souborů může vrstva do proudu dat vkládat značky. Pokud dojde k výpadku systému nebo konektivity, relace se po obnovení naváže přesně od posledního bodu a nemusí se celý soubor posílat od nuly.
+- **Synchronizační body**: Při přenosu rozsáhlý souborů může vrstva do proudu dat vkládat značky. Pokud dojde k výpadku systému nebo konektivity, relace se po obnovení naváže přesně od posledního bodu a nemusí se celý soubor posílat od nuly.
 - V praxi historických sítí se zde objevoval protokol **NetBIOS**, který k navázání relace na LAN (lokální síti) nepoužíval IP adresy, ale unikátní 15znaková logická jména počítačů, a k hledání odesílal L2 broadcasty.
 
 ## Prezentační vrstva (6. vrstva)

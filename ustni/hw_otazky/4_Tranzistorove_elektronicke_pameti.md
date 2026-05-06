@@ -55,7 +55,7 @@ Technologie ECC umožňuje detekovat a opravovat jednobitové chyby (Single Bit 
 - **Nasazení:** Servery a pracovní stanice, kde by pád systému způsobený náhodným kosmickým zářením (bit flip) mohl mít fatální následky. Vyžaduje podporu procesoru i základní desky.
 
 ### Paměti pro grafické karty (VRAM / GDDR)
-Grafické paměti jsou optimalizovány pro masivní paralelní přenosy velkých bloků dat (textury, buffery).
+Grafické paměti jsou optimalizovány pro rozsáhlý paralelní přenosy velkých bloků dat (textury, buffery).
 - **GDDR6 / GDDR6X:** Využívají extrémně široké sběrnice a vysoké takty. Na rozdíl od systémové RAM jsou čipy letovány přímo u grafického procesoru (GPU).
 - **HBM (High Bandwidth Memory):** Pokročilé řešení, kde jsou paměťové čipy naskládány vertikálně na sebe přímo na pouzdře procesoru a propojeny přes ultrarychlou sběrnici (Interposer). Nabízí nejvyšší možnou propustnost při nízké spotřebě.
 

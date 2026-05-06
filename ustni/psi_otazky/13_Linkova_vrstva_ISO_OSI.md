@@ -40,6 +40,11 @@ L2 rámec obaluje užitečná data zapouzdřená ze síťové vrstvy. Ačkoliv s
 4. **Tělo (Payload)**: Samotná užitečná data a hlavičky horních vrstev (typicky 46 až 1500 bajtů – neboli MTU).
 5. **Zápatí (FCS - Frame Check Sequence)**: 4bajtový blok na úplném konci rámce, který nese 32bitový kontrolní součet. Vypočítá jej odesílatel matematickým algoritmem CRC (Cyclic Redundancy Check) z celého obsahu rámce. Přijímač na hardwarové úrovni výpočet zopakuje a výsledek porovná. Pokud se součty liší (rámec byl poškozen šumem, indukcí atd.), přijímač rámec okamžitě a bez varování zahodí. Linková vrstva v Ethernetu se neobtěžuje žádostí o opakování – záchranu dat musí vyřešit až vrstva transportní (TCP).
 
+## Sériové protokoly na linkové vrstvě
+Kromě rodiny standardů 802 (Ethernet, Wi-Fi), jež dominují lokálním sítím, operují na druhé vrstvě protokoly zaměřené na přímé Point-to-Point (bod-bod) spoje, typicky na pomalých sériových linkách poskytovatelů nebo páteřních WAN routerech:
+- **HDLC (High-Level Data Link Control)**: Proprietární bitově orientovaný protokol navržený společností Cisco pro sériové linky. Slouží k synchronnímu přenosu a jednoduchému rámcování na dedikovaných okruzích bez složité adresace (na lince jsou jen dva body).
+- **PPP (Point-to-Point Protocol)**: Pokročilejší a průmyslově standardizovaný otevřený nástupce HDLC. Lze jej nasadit na synchronních i asynchronních linkách. Zásadní výhodou PPP je nativní podpora silné autentizace (protokoly PAP a CHAP) k bezpečnému ověření obou stran před spuštěním datového toku, schopnost komprese a sdružování více fyzických linek do jedné logické.
+
 ## L2 Síťové prvky a princip Přepínání
 Na linkové vrstvě operují inteligentní hardwarová zařízení, která umí přečíst MAC adresy a na jejich základě provádět rozhodnutí (filtrování či směrování komunikace v rámci jedné sítě).
 
