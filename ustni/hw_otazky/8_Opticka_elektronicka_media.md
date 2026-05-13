@@ -1,4 +1,8 @@
-# 8. Optická a elektronická paměťová média
+---
+created: 2026-05-02T09:26
+updated: 2026-05-08T13:45
+---
+	# 8. Optická a elektronická paměťová média
 
 ## Optická záznamová média
 Optické disky využívají k uchování binární informace (nul a jedniček) mikroskopické fyzické změny na povrchu polykarbonátového kotouče, které jsou následně čteny odrazem laserového paprsku v mechanice. Na rozdíl od pevných disků (HDD) uložených do soustředných kružnic, data na optice tvoří jednu jedinou, nepřerušenou a kilometry dlouhou spirálu vedoucí od středu kotouče k jeho vnějšímu okraji. Datový stav je reprezentován prohlubněmi (tzv. **Pity** pro jedničky) a nespálenými rovnými plochami (tzv. **Landy** pro nuly).

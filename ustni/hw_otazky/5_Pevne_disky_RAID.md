@@ -1,101 +1,50 @@
-# 5. Pevné disky (HDD), SSD a disková pole RAID
+---
+created: 2026-05-02T18:19
+updated: 2026-05-08T12:29
+---
+# 5. Pevné disky, SSD a disková pole RAID
 
-Sekundární úložiště dat představují klíčovou komponentu výpočetního systému určenou k dlouhodobému a energeticky nezávislému (non-volatile) uchovávání informací. Zatímco operační paměť RAM slouží pro okamžité zpracování dat procesorem, pevné disky a SSD jednotky tvoří permanentní archiv operačního systému, aplikací a uživatelských souborů. V současné architektuře se setkáváme s koexistencí mechanických magnetických disků (HDD) s vysokou kapacitou a polovodičových disků (SSD) s extrémní přenosovou rychlostí.
+Sekundární paměťová média zajišťují energeticky nezávislé (non-volatile) uchovávání dat i po odpojení napájení. Zatímco pevné disky operují s magnetickou indukcí a elektromechanickým pohybem, polovodičová úložiště sázejí na ukládání elektrického náboje v tranzistorech.
 
-## HDD – Hard Disk Drive (Magnetická úložiště)
+## Pevné disky (HDD)
 
-Klasický pevný disk je elektromechanické zařízení využívající principu magnetického záznamu. Data jsou uložena na rotujících kovových nebo skleněných deskách, tzv. **plotnách**, pokrytých tenkou feromagnetickou vrstvou. Informace se zaznamenávají změnou orientace magnetického pole v miniaturních doménách na povrchu plotny pomocí čtecích a zápisových hlav.
+Hard Disk Drive ukládá binární data změnou orientace magnetického pole na miniaturních doménách feromagnetické vrstvy.
 
-### Fyzická konstrukce a mechanika HDD
-- **Plotny (Platters):** Kotouče upevněné na společné ose, rotující konstantní rychlostí. Moderní disky mají 1 až 8 ploten.
-- **Spindle Motor:** Vysoce přesný motor otáčející plotnami. Standardní rychlosti jsou 5 400 RPM (úsporné), 7 200 RPM (standardní) a 10 000–15 000 RPM (enterprise sféra).
-- **Vystavovací mechanismus (Actuator):** Lineární motor pohybující rameny, na jejichž koncích jsou čtecí a zápisové hlavy. Hlavy se nedotýkají povrchu, ale "plavou" na aerodynamickém polštáři ve výšce několika nanometrů.
-- **HelioSeal (Helium):** Disky s vysokou kapacitou jsou hermeticky uzavřeny a naplněny heliem namísto vzduchu. Helium má 7x nižší hustotu, což snižuje turbulence, tření a zahřívání, umožňující osazení více ploten do stejného 3,5" těla.
+### Konstrukce a parametry HDD
+Základem jsou **diskové plotny** z pevné kovové slitiny nebo skla, rotující na společné ose vřetenového motoru (**Spindle Motor**) běžnými rychlostmi 5 400 až 15 000 otáček za minutu. Nad plotnami se pohybují **čtecí a zápisové hlavy**, upevněné na ramenech vystavovacího mechanismu (**Actuator**), který využívá lineární elektromagnet (kmitací cívku) pro přesné a rychlé polohování. Hlavy udržují mikrometrový odstup od datové plochy díky aerodynamickému polštáři tvořenému rotujícím vzduchem. Disky s vysokou kapacitou často využívají hermetické uzavření s **héliem** (HelioSeal), jež má sedminásobně nižší hustotu než vzduch. Toto prostředí snižuje tření i aerodynamické turbulence a umožňuje osadit do stejného formátu více tenkých ploten, aniž by docházelo k tepelnému přetížení.
 
-### Metody magnetického záznamu a technologie hustoty
-- **CMR (Conventional Magnetic Recording):** Tradiční metoda, kde jsou magnetické stopy zapsány vedle sebe s dostatečným rozestupem. Nabízí stabilní výkon při zápisu i čtení.
-- **SMR (Shingled Magnetic Recording):** Technologie "šindelového" zápisu, kdy se stopy částečně překrývají jako tašky na střeše. Tím se zvyšuje hustota dat, ale drasticky klesá rychlost náhodného zápisu, protože při změně jedné stopy se musí přepsat celý blok překrytých stop.
-- **HAMR (Heat-Assisted Magnetic Recording):** Zápis s pomocí tepla. Laserová dioda na hlavě lokálně zahřeje médium na 450 °C, čímž dočasně sníží jeho koercitivitu a umožní zápis do extrémně malých domén.
-- **MAMR (Microwave-Assisted Magnetic Recording):** Využívá mikrovlnné záření generované "spin-torque" oscilátorem k usnadnění změny magnetické orientace bez nutnosti vysokého zahřívání.
-- **LBA (Logical Block Addressing):** Moderní způsob adresace, kdy jsou sektory číslovány lineárně od 0 do N, čímž se odstiňuje fyzická geometrie disku od operačního systému.
+Data jsou na povrchu plotny logicky dělena na **sektory**, což je nejmenší adresovatelná jednotka (typicky 512 bajtů nebo 4 KB u novějších modelů). Sektory do sebe skládají soustředné kružnice zvané **stopy** (Tracks). Souhrn stop o stejném poloměru přes obě strany všech ploten tvoří **válec** (Cylinder). Pro plynulé adresování bloků dat operačním systémem se aplikuje režim **LBA** (Logical Block Addressing), který hardwarovou geometrii zcela abstrakčně ukrývá za sekvenční lineární pole. Jakmile dojde k plánovanému nebo náhlému odpojení zdroje energie, zbytkový proud roztočeného motoru zaktivuje mechanismus stažení hlaviček do bezpečné **parkovací pozice**, zamezující ničivému pádu hlav na datovou vrstvu.
 
-### Logické členění dat na HDD
-- **Stopa (Track):** Jedna z tisíců soustředných kružnic na povrchu plotny.
-- **Sektor:** Nejmenší fyzicky adresovatelný blok dat (tradičně 512 B, dnes standard Advanced Format 4 KB).
-- **Cylinder (Válec):** Soubor všech stop se stejným poloměrem na všech površích ploten, které jsou přístupné bez pohybu ramen hlav.
-- **Cluster (Alokační blok):** Logická jednotka souborového systému tvořená jedním nebo více sektory.
+Přístupová doba HDD je definována jako součet času na vystavení hlavičky nad danou stopu (**Seek time**) a čekání na natočení požadovaného sektoru přímo pod ni (**Latency**), což omezuje hodnoty náhodných operací (IOPS) na řádově stovky úkonů za sekundu.
 
-## SSD – Solid State Drive (Polovodičová úložiště)
+### Technologie magnetického záznamu
+Když fyzikální limity tradičního podélného záznamu vyústily ve spontánní ztrátu dat kvůli superparamagnetismu, zavedl se **kolmý záznam** (PMR / CMR), jenž orientuje vektory magnetické indukce vertikálně do hloubky povrchu. Tímto se ušetřila plošná kapacita. K další extenzivní kompresi dat dochází nasazením **šindelového záznamu** (SMR). U tohoto typu jsou zápisové stopy širší než čtecí a částečně se vzájemně překrývají. Výsledkem je razantní nárůst kapacity. Technologie má však zásadní omezení při náhodném zápisu; aktualizace jednoho bitu vynutí nutnost přečíst, dočasně uložit a zpětně lineárně zapsat velký svazek sousedících stop, což markantně navyšuje časové latence operací.
 
-SSD disky neobsahují žádné pohyblivé součásti. Data jsou uchovávána v čipech typu **NAND Flash**, což jsou nevolatilní paměti založené na tranzistorech s plovoucím hradlem (Floating Gate) nebo technologii Charge Trap. Absence mechaniky přináší řádově nižší přístupovou dobu a vysokou odolnost proti nárazům.
+Prolomení fyzikálních limitů očekávají budoucí metody **HAMR** (Heat-Assisted Magnetic Recording) nebo **MAMR** (Microwave-Assisted). Laserový pulz či mikrovlnný rezonátor na okamžik rozehřeje konkrétní miniaturní doménu. Přidáním tepelné energie dojde ke snížení koercitivity kovu, materiál se stane magneticky tvárným, umožní zápis úzkou hlavou a během nanosekund vychladne zpět do rigidního, stabilního stavu.
+
+## Polovodičová úložiště (SSD)
+
+Solid State Drive zcela postrádá mechanické prvky a k zachování logických stavů nula a jedna vnáší elektrický náboj do mřížky NAND flash pamětí. Poskytují bezprecedentní přístupovou dobu a mechanickou rezistenci vůči otřesům.
 
 ### Architektura paměťových buněk NAND
-- **SLC (Single Level Cell):** 1 bit na buňku. Nejvyšší rychlost, extrémní životnost (cca 100 000 cyklů), ale nejnižší hustota a vysoká cena.
-- **MLC (Multi Level Cell):** 2 bity na buňku. Vyvážený poměr mezi výkonem a cenou, dnes ustupující.
-- **TLC (Triple Level Cell):** 3 bity na buňku. Aktuální standard pro běžná PC. Dobrá kapacita, životnost kolem 3 000 cyklů.
-- **QLC (Quad Level Cell):** 4 bity na buňku. Vysoká hustota a nízká cena, ale nižší rychlost zápisu a životnost (cca 1 000 cyklů).
-- **3D NAND (V-NAND):** Čipy nejsou stavěny pouze ploše, ale buňky jsou vrstveny vertikálně nad sebou (klidně 232 vrstev), což umožňuje obrovské kapacity na malé ploše.
-- **Charge Trap Flash:** Alternativa k Floating Gate technologii, využívající nevodivou vrstvu nitridu křemíku k zachycení elektronů. Je stabilnější při extrémní miniaturizaci a vertikálním vrstvení.
-- **Z-NAND / XL-FLASH:** Specializované typy NAND s extrémně nízkou latencí (blížící se Intel Optane), určené pro nejnáročnější databázové operace.
+Ústřední prvek SSD představuje tranzistor typu MOSFET modifikovaný o plovoucí hradlo (Floating Gate) či vrstvu oxidu křemíku (Charge Trap). Zachycením a uvězněním elektronů v izolovaném hradle dochází k modifikaci prahového napětí, což řídicí elektronika při čtení překládá do binární informace.
 
+Podle množství bitů uvězněných v jedné buňce rozdělujeme NAND čipy do generací: **SLC** (Single Level Cell – 1 bit), **MLC** (2 bity), **TLC** (3 bity) a nejnovější **QLC** (4 bity). Implementace vícebitových vrstev geometricky zvyšuje kapacitu a sráží výrobní cenu. Nese s sebou však kompromis – nutnost rozlišovat mezi šestnácti různými stavy prahového napětí u čipu QLC degraduje výkon zápisu a snižuje životnost buňky, definovanou přes parametr **TBW** (Total Bytes Written). Vzhledem k rychlému fyzikálnímu vyčerpání izolační vrstvy tranzistorů přešli výrobci k integraci do hloubky. Namísto další miniaturizace obvodů v ploše čipu se buňky staví vertikálně pomocí technologií **3D NAND** (v desítkách až stovkách aktivních vrstev nad sebou).
 
-### Řadič a správa SSD (Controller)
-- **Wear Leveling:** Algoritmus, který rovnoměrně rozděluje zápisy do všech buněk disku. Zabraňuje tomu, aby se některé buňky opotřebovaly dříve než ostatní.
-- **TRIM:** Příkaz operačního systému, který informuje SSD, které bloky dat již nejsou platné (např. po smazání souboru). Řadič je pak může vyčistit na pozadí, což udržuje vysoký výkon zápisu.
-- **Garbage Collection (GC):** Interní proces SSD, který na pozadí čistí bloky obsahující smazaná data a konsoliduje je, aby uvolnil místo pro nové zápisy. Tento proces je úzce spjat s funkcí TRIM.
-- **Over-provisioning:** Vyhrazená část kapacity disku (neviditelná pro uživatele), kterou řadič používá pro nahrazování vadných buněk a režijní operace jako Garbage Collection.
-- **Write Amplification (WA):** Nežádoucí jev, kdy se kvůli nutnosti mazat celé bloky před zápisem do stránek zapíše do flash paměti reálně více dat, než kolik poslal operační systém.
-- **HMB (Host Memory Buffer):** Technologie u levnějších "DRAM-less" SSD, která umožňuje disku využít malou část systémové RAM jako vyrovnávací paměť pro mapovací tabulky.
+### Řadič a optimalizační nástroje
+Paměť Flash nedokáže přímo přepsat stav jedné buňky bez jejího předchozího kompletního vymazání. Mazací procedury jsou navíc architektonicky prováděny plošně po blocích. Koordinaci proto musí bezvýhradně zastat logický **řadič** vybavený vrstvou **FTL** (Flash Translation Layer).
 
+FTL abstrahuje fyzické bloky paměti před operačním systémem a zajišťuje procesy optimalizace. Algoritmus **Wear Leveling** sleduje počty přepisů napříč čipem a směruje zápisy do nejméně využitých domén, čímž rovnoměrně prodlužuje hardwarovou výdrž disku. Během zátěže operačního systému pomáhá instrukce **TRIM**. Umožňuje z nadřazené úrovně softwaru oznámit řadiči adresy odstraněných souborů. Interní mechanismus **Garbage Collection** pak ve volném čase tyto označené datové bloky interně seskupí a preventivně smaže. Udržuje tak bloky čisté, díky čemuž při reálném zápisu odpadá latence cyklu mazání. 
 
-### Rozhraní a formáty SSD
-- **2.5" SATA:** Starší formát kompatibilní s HDD. Limitován propustností sběrnice SATA III (cca 560 MB/s).
-- **M.2 NVMe:** Moderní standard využívající sběrnici **PCI Express**. Protokol NVMe (Non-Volatile Memory express) je navržen přímo pro flash paměti, podporuje vysoké fronty příkazů a dosahuje rychlostí přes 7 000 MB/s (Gen4) až 12 000 MB/s (Gen5).
+Fyzická rozhraní SSD kopírují vývoj sběrnic. Pro starší nasazení trvá kompatibilita skrze formát 2.5" pro sběrnici **SATA** (maximum 600 MB/s). Současný aplikační standard diktuje sběrnice PCI-Express pod specifikací karet **M.2**. Ty komunikují s procesorem v režimu protokolu **NVMe** (Non-Volatile Memory Express), otevírají obrovskou hloubku fronty instrukcí a poskytují propustnost dosahující teoretických limitů PCIe.
 
-## RAID – Redundant Array of Independent Disks
+## Disková pole RAID
 
-RAID je technologie spojující několik fyzických pevných disků do jednoho logického celku. Cílem je zvýšení výkonu (rychlosti čtení/zápisu), zvýšení bezpečnosti dat (odolnost proti selhání disku) nebo kombinace obojího.
+Kritickým aspektem síťových systémů, produkčních databází nebo NAS stanic je bezpečnost a paralelizace toku dat. **RAID** (Redundant Array of Independent Disks) abstrahuje pole tvořené z více magnetických disků či SSD jednotek na jediné logické úložné zařízení. Management řeší dedikovaný hardwarový řadič vybavený vlastním procesorem s cache pamětí, nebo softwarová utilita nad operačním systémem generující zátěž systémovému CPU.
 
-### Základní úrovně RAID
-- **RAID 0 (Stripping - Proužkování):**
-  - Data jsou rozdělena na bloky a střídavě zapisována na dva nebo více disků.
-  - **Výhoda:** Sumace rychlostí všech disků, plná kapacita.
-  - **Nevýhoda:** Nulová redundance. Selhání jediného disku znamená okamžitou ztrátu všech dat v poli.
-- **RAID 1 (Mirroring - Zrcadlení):**
-  - Stejná data se zapisují současně na dva disky.
-  - **Výhoda:** Vysoká bezpečnost, při selhání jednoho disku systém běží dál. Rychlejší čtení (lze číst z obou disků najednou).
-  - **Nevýhoda:** Kapacita je rovna pouze velikosti nejmenšího disku (50 % u dvou disků).
-- **RAID 5 (Stripping with Distributed Parity):**
-  - Vyžaduje minimálně 3 disky. Data a paritní informace jsou rozprostřeny mezi všechny disky.
-  - **Výhoda:** Odolnost proti selhání jednoho disku. Efektivnější využití kapacity než u zrcadlení (kapacita je n-1 disků).
-  - **Nevýhoda:** Výrazné zpomalení zápisu kvůli výpočtu parity. Při selhání disku pole běží v degradovaném režimu a obnova (rebuild) trvá dlouho.
-- **RAID 6 (Stripping with Double Parity):**
-  - Podobné jako RAID 5, ale používá dva nezávislé paritní bloky. Vyžaduje minimálně 4 disky.
-  - **Výhoda:** Odolá současnému selhání až dvou disků.
-- **RAID 10 (1+0):**
-  - Kombinace zrcadlení a proužkování. Vyžaduje minimálně 4 disky.
-  - **Výhoda:** Maximální výkon i vysoká bezpečnost.
-  - **Nevýhoda:** Velmi drahé řešení (využitelná je pouze polovina kapacity).
-
-### Implementace a obnova pole
-- **Hardware RAID:** Pole řídí dedikovaný řadič s vlastním procesorem a vyrovnávací pamětí (často zálohovanou baterií BBU). Nezatěžuje CPU počítače a je nejstabilnější.
-- **Software RAID:** Pole vytváří operační systém (např. Windows Storage Spaces nebo Linux mdadm). Levné řešení, ale spotřebovává výkon hlavního procesoru.
-- **Rebuild (Obnova):** Proces po výměně vadného disku za nový. Řadič dopočítává chybějící data z paritních informací nebo zrcadla a zapisuje je na nový disk. Během této doby je pole extrémně vytížené a náchylné k dalšímu selhání.
-- **Hot Swap / Hot Spare:** Možnost výměny disku za chodu systému a přítomnost záložního disku, který se do pole zapojí automaticky ihned po detekci závady.
-
-## Pokročilé parametry a výkonnostní metriky
-
-Při výběru a diagnostice úložných systémů hrají roli specifické ukazatele, které definují reálnou propustnost a odezvu systému v závislosti na typu zátěže (sekvenční vs. náhodný přístup).
-
-### Metriky výkonu
-- **IOPS (Input/Output Operations Per Second):** Počet operací čtení a zápisu, které disk zvládne vykonat za jednu sekundu. Zatímco mechanické HDD dosahují stovek IOPS, moderní NVMe SSD běžně překonávají hranici milionu IOPS.
-- **Latence (Access Time):** Časová prodleva mezi vysláním požadavku a zahájením přenosu dat. U HDD je tvořena součtem doby vystavení hlav (seek time) a čekáním na otočení plotny (latence), u SSD je díky absenci mechaniky téměř nulová (v řádech mikrosekund).
-- **Sekvenční rychlost:** Maximální rychlost přenosu velkých souborů. U HDD je limitována hustotou záznamu a RPM, u SSD šířkou pásma sběrnice PCIe a výkonem řadiče.
-
-### Spolehlivost a životnost
-- **TBW (Total Bytes Written):** Hodnota u SSD udávající celkový objem dat v terabytech, který lze na disk zapsat před pravděpodobným selháním paměťových buněk. Je to klíčový parametr pro záruku a nasazení v serverech.
-- **MTBF (Mean Time Between Failures):** Střední doba mezi poruchami, udávaná v hodinách. Statistický údaj o spolehlivosti mechanických i elektronických komponent.
-- **S.M.A.R.T. (Self-Monitoring, Analysis and Reporting Technology):** Monitorovací systém integrovaný v disku, který sleduje kritické parametry (teplota, počet realokovaných sektorů, chyby při čtení) a varuje uživatele před hrozícím kolapsem.
-- **Bit Rot (Degradace dat):** Postupné a samovolné poškození dat na médiu vlivem vnějších faktorů (magnetismus, ztráta náboje). Moderní souborové systémy a RAID pole proti němu bojují pomocí kontrolních součtů a periodické kontroly (Data Scrubbing).
-- **ECC (Error Correction Code):** Pokročilé algoritmy v řadiči disku, které dokáží detekovat a opravit drobné chyby vzniklé při přenosu nebo ukládání dat do paměťových buněk.
-
+### Bezpečnostní a paralelizované úrovně (Topologie)
+- **RAID 0 (Proužkování / Striping):** Data se deterministicky dělí do fixních bloků napříč celým polem. Architektura teoreticky násobí čtecí i zápisovou rychlost dle počtu disků. Defektem jediného člena padá logická integrita celého řetězce (zcela chybí redundance).
+- **RAID 1 (Zrcadlení / Mirroring):** Dva nebo více disků udržují identické bitové kopie na sekundární zrcadla. Selhání primárního zařízení nemá vliv na funkčnost produkce. Celková dostupná kapacita odpovídá specifikacím nejmenšího osazeného disku, zatímco zápis limituje rychlost nejpomalejší jednotky. Zaručuje vysokou čtecí propustnost.
+- **RAID 5 (Distribuovaná parita):** Distribuuje data a matematické samoopravné kódy (paritu vypočtenou logickou operací XOR) střídavě napříč alespoň třemi disky. Pole udržuje funkčnost vůči fatálnímu výpadku libovolné jednotky při celkové efektivní kapacitě (N-1 disků). Systém generuje drobnou výpočetní latenci u zápisu z důvodu kalkulace chybových kódů.
+- **RAID 6 (Dvojitá parita):** Robustní integrace dvou ortogonálních sad paritních součtů s požadavkem na minimum čtyř disků. Toleruje permanentní zničení dvou fyzických jednotek současně za cenu mírné degradace čtecích a zápisových dob oproti RAID 5.
+- **RAID 10 (1+0):** Kaskádová topologie aplikující spolehlivost logického zrcadlení z vrstvy 1 do distribučních prvků vrstvy 0 (minimum čtyři disky). Výsledkem je vysoká aplikační propustnost chráněná redundancí s inherentní padesátiprocentní ztrátou hrubé kapacity zrcadlením. Náhradu selhaného zařízení obstarává rutinní fáze **Rebuild**, u níž subsystém exaktně dopočítává chybějící data.
