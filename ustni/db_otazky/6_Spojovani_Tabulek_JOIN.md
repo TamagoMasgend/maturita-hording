@@ -1,3 +1,7 @@
+---
+created: 2026-05-06T23:20
+updated: 2026-05-20T13:19
+---
 # 6. Spojování tabulek v relačních databázích (Operátory JOIN a UNION)
 
 Základní inženýrskou stavební architekturou relačních systémů (RDBMS), postavených na axiomech E.F. Codda, je matematický proces označovaný jako **Normalizace**. Ve snaze zajistit striktní datovou integritu, zamezit aktualizačním anomáliím a eliminovat jakoukoliv redundanci v záznamech (duplicity), databázoví architekti rozřezávají a strukturují komplexní firemní dokumenty do desítek izolovaných entitních tabulek. 
@@ -33,7 +37,7 @@ Specifická a výpočetně vysoce zatěžující metoda průniku nad disky pamě
 - *Upozornění k MySQL*: Nejpoužívanější open-source engine na světě, **MySQL**, tuto klauzuli nativně ve svém parseru vůbec nepodporuje. Plné vnější spojení se v MySQL programuje oklikou pomocí nástroje pro vertikální spojení: provede se `LEFT JOIN`, následně `UNION` a pod něj se připíše `RIGHT JOIN`.
 
 ## Vertikální fúze nezávislých dotazů (Operátor UNION)
-Zatímco příkazy z rodiny `JOIN` svazují sloupce tabulek horizontálně a propojují je logicky "do šířky" do rozsáhlý supertabulky na základě cizích klíčů, operátor `UNION` dělá proces radikálně odlišný. Jde o zřetězení "do výšky".
+Zatímco příkazy z rodiny `JOIN` svazují sloupce tabulek horizontálně a propojují je logicky "do šířky" do rozsáhlé výsledné tabulky na základě cizích klíčů, operátor `UNION` vykonává proces odlišný. Jde o sjednocení "do výšky".
 
 Operátor `UNION` poskládá na sebe (vertikálně sešije shora dolů) výsledky ze dvou zcela izolovaných dotazů `SELECT`. Tvoří vrstvení dat na jeden štos bez vzájemných referenčních vazeb. K této operaci platí tvrdé inženýrské pravidlo: **Struktury obou spojovaných dotazů musí obsahovat absolutně shodný počet sloupců a vracet shodné (nebo konvertovatelné) datové typy**. Jinak RDBMS proces zruší s chybou `Syntax Error`.
 

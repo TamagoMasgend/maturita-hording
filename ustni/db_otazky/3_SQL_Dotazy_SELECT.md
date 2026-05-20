@@ -1,3 +1,7 @@
+---
+created: 2026-05-06T23:20
+updated: 2026-05-20T13:18
+---
 # 3. Zpracování dat a relační dotazy jazyka SQL (SELECT)
 
 K interakci a čtení uložených dat ze struktury relační databáze se z hlediska normy SQL nevyužívají moduly DDL, nýbrž se uplatňuje flexibilní a matematicky precizní rodina příkazů nazývaná **DML (Data Manipulation Language)**. Operátor odesílaný enginu uvozený příkazovým slovem `SELECT` tvoří naprostou páteř celého moderního analytického světa.
@@ -5,7 +9,7 @@ K interakci a čtení uložených dat ze struktury relační databáze se z hled
 Hlavní filozofií dotazu `SELECT` je neporušit a neměnit fyzická data uložená na disku (odpovídá operaci Read v paradigmatu CRUD). Cílem je nakázat kompilátoru a procesorům RDBMS (např. MySQL), aby na základě aplikovaných filtrů vyhodnotily relační algebru a vytvořily pro programátora zcela virtuální a matematicky izolovanou množinu odpovídajících n-tic (záznamů). Tuto vyfiltrovanou sadu, zvanou **Result Set**, pak databáze pošle v síťovém paketu klientovi a z paměti RAM ji okamžitě zahodí.
 
 ## Základní syntaxe a Aliasování (AS)
-Dotaz začíná určením sloupců, které chce aplikace vytáhnout z konkrétní tabulky za klauzulí `FROM`. Použití zástupného znaku `*` (hvězdička) pro vytažení všech sloupců se v produkčním softwarovém inženýrství přísně zakazuje, protože masivně a zbytečně přetěžuje I/O sběrnici i síťovou propustnost.
+Dotaz začíná určením sloupců, které chce aplikace vytáhnout z konkrétní tabulky za klauzulí `FROM`. Použití zástupného znaku `*` (hvězdička) pro vytažení všech sloupců se v produkčním softwarovém inženýrství přísně zakazuje, protože zbytečně a výrazně přetěžuje I/O sběrnici i síťovou propustnost.
 
 Deklarací zástupného štítku pomocí klauzule `AS` (nebo jen mezerou) proces přepíše hlavičkové nadpisy exportovaných sloupců do čitelnější podoby pro prezentační vrstvu v aplikačním kódu klienta.
 
@@ -20,7 +24,7 @@ SELECT unikatni_nazev_kusu, hruba_prodejni_cena AS 'Cena_Faktury_Bez_DPH' FROM p
 ## Odstranění sémantických duplicit (DISTINCT) a stránkování (LIMIT)
 V databázích se data v mnoha sloupcích cyklicky opakují (např. desítky zaměstnanců ze stejného "Kraje"). Přeje-li si analytik získat pouze unikátní výčet existujících kategorií na jeden průchod z databázových strojů, musí vynutit matematicky precizní potlačení zrcadlených dat pomocí komprimačního operátoru `DISTINCT`.
 
-Pokud procesní výpis z pamětí zablokuje dotaz s vrácením milionů hodnot zasílaných sítí přímo na frontend, vzniká zahlcení sítě a pád aplikace. RDBMS tomu brání zaříznutím počtu záznamů ze součtu čtení za chodu klauzulí `LIMIT`. Toto hardwarové omezení hraje kritickou roli při optimalizovaném stránkování (Paginaci) webových gridů a tabulek.
+Přenášení milionů řádků přímo do klientské aplikace by mohlo způsobit zahlcení sítě a pád rozhraní. Databázový systém tomu předchází omezením počtu vrácených záznamů pomocí klauzule `LIMIT`. Toto omezení hraje klíčovou roli při optimalizovaném stránkování (paginaci) webových gridů a tabulek.
 
 ```sql
 -- Optimalizované profiltrování napříč všemi řádky vracející pouze unikátní jména měst
@@ -36,9 +40,13 @@ Zmenšení parsovací fáze diskových zpráv na pouze uživatelem vyžádané r
 U aplikací se kombinují další logické moduly operátorů SQL na filtrování dotazů při čtení:
 - **Vyhodnocení shody IN**: Softwarové řešení k eliminaci rozsáhlého řetězení OR podmínek. Engine RDBMS prohledává sloupeček a komparuje buňku s množinou prvků.
 - **Komparace uzavřených okruhů BETWEEN**: Extrémně účinné filtrování kalendářních a numerických databázových intervalových os. SQL (např. MySQL) bezpečně zahrnuje hraniční stavy s vypsáním rovnou včetně obou dodaných extrémních okrajových mezních zadání.
-- **Zástupné masky LIKE (Wildcards)**: Zavedený rovnítkový operátor selhává při vyhledávání nekompletních slov. RDBMS aplikuje porovnávání pomocí vzoru s divokými kartami:
-  - `%` (Procento): Zastupuje exaktně po sobě jdoucí libovolnou soustavu znaků (i nulovou délku).  
-  - `_` (Podtržítko): Zastupuje exaktní matematickou propustnost jen pro jeden jediný chybějící znak.
+- **Zástupné masky LIKE (Wildcards)**: Zavedený rovnítkový operátor selhává při vyhledávání nekompletních slov. RDBMS aplikuje porovnávání pomocí vzoru se zástupnými znaky:
+  - **Standard ANSI SQL (MySQL, PostgreSQL)**:
+    - `%` (Procento): Zastupuje libovolný počet znaků (i nulovou délku).
+    - `_` (Podtržítko): Zastupuje právě jeden libovolný znak.
+  - **Alternativní zástupné znaky (např. Microsoft Access)**:
+    - `*` (Hvězdička): Plní stejnou roli jako `%` (nahrazuje libovolný počet znaků).
+    - `?` (Otazník): Plní stejnou roli jako `_` (nahrazuje jeden znak).
 
 ```sql
 -- Použití logické komparace IN namísto nečitelných řetězců OR

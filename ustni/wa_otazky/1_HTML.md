@@ -1,3 +1,7 @@
+---
+created: 2026-05-06T23:20
+updated: 2026-05-20T13:02
+---
 # 1. Hyper Text Markup Language (HTML)
 
 ## Koncept, účel a fungování pod kapotou
@@ -16,7 +20,7 @@ Původní koncept HTML navrhl inženýr **Tim Berners-Lee** v laboratořích CER
 
 - O standardizaci se historicky staralo konsorcium **W3C (World Wide Web Consortium)**. V 90. letech a na začátku milénia panovala éra tzv. "Války prohlížečů", kdy si každý výrobce (Microsoft IE, Netscape) přidával do HTML vlastní nestandardizované tagy, což vedlo k rozbití kompatibility. W3C definovalo přísné verze jako HTML 4.01 a následně XHTML (což byla kombinace HTML se striktními chybovými pravidly vycházejícími z XML, kde chybějící lomítko znamenalo pád celé stránky).
 - Vývoj moderní specifikace dnes řídí flexibilnější organizace **WHATWG (Web Hypertext Application Technology Working Group)**, kterou založili zástupci firem Apple, Mozilla a Opera jako reakci na pomalost W3C.
-- V roce 2014 byl vydán zlomový standard **HTML5**, který nativně přinesl podporu pro multimédia (video, audio), prvek `<canvas>` pro 2D/3D vykreslování v hardwaru a API pro lokální ukládání dat (Local Storage), čímž zlikvidoval nutnost instalace děravých zásuvných modulů třetích stran (např. Adobe Flash nebo Microsoft Silverlight). Současná definice HTML5 operuje jako takzvaný "Living Standard", tedy průběžně a neustále aktualizovaná specifikace bez vydávání nových velkých číselných verzí.
+- V roce 2014 byl vydán zlomový standard **HTML5**, který nativně přinesl podporu pro multimédia (video, audio), prvek `<canvas>` pro 2D/3D vykreslování v hardwaru a API pro lokální ukládání dat (Local Storage). To odstranilo nutnost instalace nespolehlivých zásuvných modulů třetích stran (např. Adobe Flash nebo Microsoft Silverlight). Současná specifikace HTML5 funguje jako takzvaný "Living Standard", tedy průběžně aktualizovaná specifikace bez vydávání nových velkých verzí.
 
 ## Syntaxe a struktura validního dokumentu
 

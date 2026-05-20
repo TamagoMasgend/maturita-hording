@@ -1,61 +1,94 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
-    </head>
-    <body>
-        <p id="vyherci">Výherci</p>
-        <p id="skoreUzivate">{{uzivatelBody}}</p>
-        <p id="skoreRobota">{{robotBody}}</p>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Kámen, nůžky, papír</title>
+</head>
+<body>
+    <h1>Kámen, Nůžky, Papír</h1>
+    
+    <button onclick="hrat('kámen')">Kámen</button>
+    <button onclick="hrat('nůžky')">Nůžky</button>
+    <button onclick="hrat('papír')">Papír</button>
 
-        <button id="kamen">Kamen</button>
-        <button id="nuzky">Nuzky</button>
-        <button id="papir">Papir</button>
+    <button onclick="resetovatSkore()">Reset Skóre</button> 
+    <button onclick="vypsatSkore()">Vypsat skóre z Local Storage</button> 
+    <p id="vypisStorage"></p> 
 
-        <script>
-            let uzivatelBody;
-            let robotBody;
+    <p id="vysledek">Zkus štěstí!</p>
+    <p>Skóre: <span id="skore">0</span></p>
+    <p>Skóre počítače: <span id="botSkore">0</span></p>
+    
+    <script>
+        let celkoveSkore = parseInt(localStorage.getItem('skore')) || 0;
+        let celkoveBotSkore = parseInt(localStorage.getItem('botSkore')) || 0;
+        
+        let koloBody = 0;
+        let koloBotBody = 0;
 
-            localStorage.getItem("uzivatelBody", uzivatelBody);
-            localStorage.getItem("robotBody", robotBody);
+        document.getElementById('skore').innerText = celkoveSkore;
+        document.getElementById('botSkore').innerText = celkoveBotSkore;
 
-            const ruceRobota = ["kamen", "nuzky", "papir"];
+        function hrat(moje) {
+            if (koloBody >= 2 || koloBotBody >= 2) {
+                koloBody = 0;
+                koloBotBody = 0;
+            }
 
-            document.getElementById("kamen").onclick = function () {
-                let robotVyber;
-                let clovekVyber;
-                let index;
+            let moznosti = ['kámen', 'nůžky', 'papír'];
+            let pocitac = moznosti[Math.floor(Math.random() * 3)];
+            let vysledek = '';
 
-                let vyhernyBodyUzivatel;
-                let vyhernyBodyRobot;
+            if (moje == pocitac) {
+                vysledek = 'Remíza :/ Oba dali ' + moje;
+            } else if (
+                (moje == 'kámen' && pocitac == 'nůžky') || 
+                (moje == 'nůžky' && pocitac == 'papír') || 
+                (moje == 'papír' && pocitac == 'kámen')
+            ) {
+                vysledek = 'Výhra! Tvoje ' + moje + ' poráží ' + pocitac + '.';
+                koloBody++;
+            } else {
+                vysledek = 'Prohra :( Počítač dal ' + pocitac;
+                koloBotBody++;
+            }
+            
+            vysledek += ' (Průběh kola: ' + koloBody + ' : ' + koloBotBody + ')';
 
-                index = Math.floor(Math.random() * ruceRobota.length);
-                robotVyber = ruceRobota[index];
+            if (koloBody >= 2) {
+                vysledek += ' -> Dosáhl jsi 2 bodů a získáváš celkový bod!';
+                celkoveSkore++;
+            } else if (koloBotBody >= 2) {
+                vysledek += ' -> Počítač dosáhl 2 bodů a získává celkový bod.';
+                celkoveBotSkore++;
+            }
 
-                clovekVyber = "kamen";
-                if (vyhernyBodyRobot == 2) {
-                    robotBody + 1;
-                } else if (vyhernyBodyUzivatel == 2) {
-                    uzivatelBody + 1;
-                }
-                if ((clovekVyber = "kamen" && robotVyber == "papir")) {
-                    document.getElementById("vyherci").textContent =
-                        "Prohral jsi";
-                    vyhernyBodyRobot + 1;
-                } else if ((clovekVyber = "kamen" && robotVyber == "nuzky")) {
-                    document.getElementById("vyherci").textContent =
-                        "Vyhral jsi";
-                    vyhernyBodyUzivatel + 1;
-                } else if ((clovekVyber = "kamen" && robotVyber == "kamen")) {
-                    document.getElementById("vyherci").textContent = "Remiza";
-                }
-                console.log(robotVyber);
-            };
+            localStorage.setItem('skore', celkoveSkore);
+            localStorage.setItem('botSkore', celkoveBotSkore);
+            document.getElementById('skore').innerText = celkoveSkore;
+            document.getElementById('botSkore').innerText = celkoveBotSkore;
+            document.getElementById('vysledek').innerText = vysledek;
+        }
 
-            localStorage.setItem("uzivatelBody", uzivatelBody);
-            localStorage.setItem("robotBody", robotBody);
-        </script>
-    </body>
+        
+        function resetovatSkore() {
+            localStorage.removeItem('skore');
+            localStorage.removeItem('botSkore');
+            celkoveSkore = 0;
+            celkoveBotSkore = 0;
+            koloBody = 0;
+            koloBotBody = 0;
+            document.getElementById('skore').innerText = celkoveSkore;
+            document.getElementById('botSkore').innerText = celkoveBotSkore;
+            document.getElementById('vysledek').innerText = "Skóre bylo vyresetováno!";
+        }
+
+        function vypsatSkore() {
+            let ulozeneSkore = localStorage.getItem('skore') || 0;
+            let ulozeneBotSkore = localStorage.getItem('botSkore') || 0;
+            document.getElementById('vypisStorage').innerText = 'Tvoje skóre: ' + ulozeneSkore + '\nSkóre počítače: ' + ulozeneBotSkore;
+        }
+        
+    </script>
+</body>
 </html>

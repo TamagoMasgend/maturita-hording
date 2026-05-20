@@ -1,3 +1,7 @@
+---
+created: 2026-05-06T23:20
+updated: 2026-05-20T13:03
+---
 # 3. Programování backendu webových aplikací v Pythonu
 
 ## Kompilované versus Skriptovací a Interpretované jazyky
@@ -13,7 +17,7 @@ Při zpracování zdrojového kódu (lidsky čitelného zápisu z ASCII/UTF-8 zn
    Zdrojový kód se zde nekompiluje předem do samostatného binárního souboru cílové platformy. Zákazníkovi či serveru se distribuuje přímo originální, textový zdrojový kód. K jeho běhu je bezpodmínečně nutné nainstalovat překladový program – **Interpret** (např. CPython, Node.js V8, PHP Zend Engine). Kód se vyhodnocuje a převádí do strojových instrukcí sekvenčně, řádek po řádku, až v reálném čase za běhu.
    - U jazyka Python je architektura mírně složitější. Kód není interpretován jako čistý text, ale CPython jej nejprve bleskově (a nepozorovaně) transformuje do nízkoúrovňového abstraktního formátu zvaného **Bytecode** (skryté `.pyc` soubory ve složce `__pycache__`). Tento Bytecode následně zpracovává izolační vrstva zvaná PVM (Python Virtual Machine).
    - **Výhody**: Absolutní přenositelnost napříč operačními systémy. Stačí stejný textový skript překopírovat z Windows na Linux či Mac, a pokud je tam instalován interpret, program okamžitě běží bez úprav (Write once, run anywhere). Zajišťuje enormně rychlé vývojové iterace (okamžité testování bez čekání na kompilátor).
-   - **Nevýhody**: Z principu věci a neustálé režie překladového enginu je výpočetní čas rozsáhlý pomalejší. U matematicky intenzivních operací je Python oproti C++ i stonásobně pomalejší. U Pythonu do výkonu zasahuje i nechvalně známý koncept **GIL (Global Interpreter Lock)**, což je mutex v jádře CPythonu, který zamezuje paralelnímu provádění instrukcí z více vláken současně (z důvodu nebezpečí poškození Garbage Collectoru sčítajícího reference paměti).
+   - **Nevýhody**: Z principu věci a neustálé režie překladového enginu je výpočetní čas výrazně pomalejší. U matematicky intenzivních operací je Python oproti C++ i stonásobně pomalejší. U Pythonu do výkonu zasahuje i nechvalně známý koncept **GIL (Global Interpreter Lock)**, což je mutex v jádře CPythonu, který zamezuje paralelnímu provádění instrukcí z více vláken současně (z důvodu nebezpečí poškození Garbage Collectoru sčítajícího reference paměti).
 
 ## Základní programové konstrukce v jazyce Python
 
@@ -87,9 +91,9 @@ print(f"Cena po zdanění činí: {konecna_faktura} Kč")
 
 ## Architektura projektu v mikro-frameworku Flask
 
-Pro běh backendové aplikace v jazyce Python není nutné složitě konfigurovat systémové sokety nad TCP/IP pro příjem dat (HTTP Requestů). Na to slouží obalové aplikační platformy (Frameworky). **Flask** patří do kategorie _Mikro-frameworků_. Na rozdíl od rozsáhlý monolitického frameworku Django, Flask vývojáři nediktuje žádnou předdefinovanou databázi (ORM) ani složitou strukturu desítek složek. Poskytuje pouhé minimalistické jádro k obsluze sítě.
+Pro běh backendové aplikace v jazyce Python není nutné složitě konfigurovat systémové sokety nad TCP/IP pro příjem dat (HTTP Requestů). Na to slouží obalové aplikační platformy (Frameworky). **Flask** patří do kategorie _Mikro-frameworků_. Na rozdíl od rozsáhlého monolitického frameworku Django, Flask vývojáři nediktuje žádnou předdefinovanou databázi (ORM) ani složitou strukturu desítek složek. Poskytuje pouhé minimalistické jádro k obsluze sítě.
 
-Architektonicky se staví na průmyslovém rozhraní **WSGI (Web Server Gateway Interface)**, což je komunikační předpis v jazyce Python (konkrétně v knihovně Werkzeug zprostředkovávající toky), který umožňuje ostrému internetovému serveru (např. Nginx ve spolupráci s Gunicorn) vzbudit v RAM paměti Python kód, přesunout do něj síťový dotaz a převzít od něj textovou odpověď pro klienta. Pro generování dynamických HTML stránek Flask integruje šablonovací engine **Jinja2**.
+Architektonicky se staví na průmyslovém rozhraní **WSGI (Web Server Gateway Interface)**, což je komunikační předpis v jazyce Python (konkrétně v knihovně Werkzeug zprostředkovávající HTTP komunikaci), který umožňuje ostrému internetovému serveru (např. Nginx ve spolupráci s Gunicorn) vzbudit v RAM paměti Python kód, přesunout do něj síťový dotaz a převzít od něj textovou odpověď pro klienta. Pro generování dynamických HTML stránek Flask integruje šablonovací engine **Jinja2**.
 
 Konvenční a logická struktura adresářů produkčního mikro-projektu vypadá následovně:
 
@@ -122,7 +126,7 @@ def user_profile(user_id):
 
 # 4. Spouštěcí klauzule
 if __name__ == '__main__':
-    # Spuštění interního developerského Werkzeug serveru na všech interfasech (0.0.0.0) na portu 5000.
+    # Spuštění interního developerského Werkzeug serveru na všech síťových rozhraních (0.0.0.0) na portu 5000.
     # V produkčním cloudu tento kód nespouští přímo Python, ale WSGI server typu Gunicorn/uWSGI.
     app.run(host='0.0.0.0', port=5000, debug=True)
 ```

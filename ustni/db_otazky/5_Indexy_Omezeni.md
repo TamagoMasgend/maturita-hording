@@ -1,19 +1,28 @@
+---
+created: 2026-05-06T23:20
+updated: 2026-05-20T13:19
+---
 # 5. Indexy a integritní omezení v relačních databázích
 
 Fyzický výkon relační databáze RDBMS se neopírá o prostou rychlost pevných disků a procesorů. Pokud administrátor nechá strukturu tabulky běžet ve výchozím stavu bez inženýrského optimalizačního zásahu (tzv. architektura Heap), databázový démon musí při každém dotazu s klauzulí `WHERE` z disku přesunout do paměti RAM postupně absolutně každý uložený řádek a u každého sekvenčně testovat podmínku shody. Tento proces se nazývá **Full Table Scan**. Při tabulkách o 50 milionech záznamech by jedno ověření loginu mohlo paralyzovat serverové procesy na celé minuty.
 
-## Indexování a struktura B-Strojů (B-Trees)
+## Indexování a struktura B-stromů (B-Trees)
 Nekompromisní hardwarovou eliminaci tohoto prohledávacího problému řeší inženýrský konstrukt nazývaný **Index**. Index tvoří asymetrickou, nezávislou zrcadlovou datovou strukturu oddělenou od původní tabulky. Zmenšená struktura udržuje ve svém stromovém zápisu výhradně kopii vybraného optimalizovaného sloupce a příslušný paměťový pointer na exaktní blok a sektor v hardwaru disku, kde fyzicky leží onen hledaný plný řádek s ostatními sloupci.
 
-V profesionálních motorech (jako InnoDB pro MySQL či PostgreSQL) se indexy neukládají lineárně, nýbrž do komplexní a matematicky precizně vybalancované hierarchie **B+Strojů (B+Trees)**. Uzly (Nodes) jsou řazeny od kořene dolů do listů. Jakmile klient vyhledává konkrétní číslo, procesor díky matematickým nerovnostem v každém uzlu vyloučí stovky tisíc nerelevantních výsledků jediným odbočením vpravo či vlevo. Prohledávání tak funguje s asymptotickou výpočetní časovou složitostí O(log n), kdy vyhledání 1 záznamu z miliardy zabere hardwaru procesoru pouhých několik mikrosekund (typicky průchod třemi až čtyřmi hladinami stromu).
+V profesionálních motorech (jako InnoDB pro MySQL či PostgreSQL) se indexy neukládají lineárně, nýbrž do komplexní a matematicky precizně vybalancované hierarchie **B+ stromů (B+Trees)**. Uzly (Nodes) jsou řazeny od kořene dolů do listů. Jakmile klient vyhledává konkrétní číslo, procesor díky matematickým nerovnostem v každém uzlu vyloučí stovky tisíc nerelevantních výsledků jediným odbočením vpravo či vlevo. Prohledávání tak funguje s asymptotickou výpočetní časovou složitostí O(log n), kdy vyhledání 1 záznamu z miliardy zabere hardwaru procesoru pouhých několik mikrosekund (typicky průchod třemi až čtyřmi hladinami stromu).
 
 ### Typologie aplikovaných klíčů a indexů
-1. **Primární index (Primary Key - PK)**: Nejkritičtější struktura definující podstatu relací. Tabulka musí nést právě jeden absolutně exaktní identifikátor pro n-tici (zpravidla celočíselný atribut `id` s alokačním parametrem `AUTO_INCREMENT`). Hodnota primárního klíče fyzicky nesmí být chybějící a nesmí se nikdy duplikovat s jiným záznamem. Struktura B-Tree s Primárním klíčem je z hlediska motoru tak zásadní, že mnohé enginy ukládají plná data tabulky přímo na listy tohoto indexu (Clustered Index), což dělá z PK nekompromisně nejrychlejší parametr čtení v IT.
-2. **Cizí klíč (Foreign Key - FK)**: Přebírá hodnotu primárního klíče z jiné entity a tvoří pro něj lokální odkaz. Cizí klíč je stěžejní nástroj k obraně celistvosti sítě – mechanismus nazývaný **Referenční integrita**. Motor technicky na diskové úrovni zamítne požadavek z kódu aplikace k vymazání zákazníka z tabulky A, pokud tabulka B na něj stále uchovává platné odkazy přes Cizí klíče v seznamu vystavených faktur. Zabrání se tak vzniku datových reziduí odkazujících "do prázdna".
-3. **Unikátní index (Unique Index)**: Inženýrsky nasazován s cílem zablokovat duplicitu nad jiným atributem, než kterým je primární klíč. Ideální využití je nad polem s e-mailem uživatelů u registračních formulářů nebo u občanských průkazů. Strom Unique indexu bleskově hlídá vkládaná data z dotazů `INSERT` a při detekci již existující adresy zruší operaci vyhozením chybové exception ochrany.
-4. **Obyčejný index (Secondary Index)**: Účelový strom na míru pro zrychlení frekventovaných datových operací čtení `SELECT` do klauzule `WHERE`. Typicky se nasazuje nad sloupcem `prijmeni`, pokud daný e-shop tisíckrát denně vyhledává uživatele dle příjmení. 
+1. **Primární index (Primary Key - PK)**: Nejkritičtější struktura definující podstatu relací. Tabulka musí nést právě jeden absolutně exaktní identifikátor pro n-tici (zpravidla celočíselný atribut `id` s alokačním parametrem `AUTO_INCREMENT`). Hodnota primárního klíče fyzicky nesmí být chybějící (`NOT NULL`) a nesmí se nikdy duplikovat.
+2. **Cizí klíč a cizí index (Foreign Key - FK)**: Přebírá hodnotu primárního klíče z jiné entity a tvoří pro něj lokální odkaz. Cizí klíč je stěžejní nástroj k obraně celistvosti sítě – mechanismus nazývaný **Referenční integrita**. Mnoho moderních RDBMS automaticky vytváří na pozadí index pro sloupec cizího klíče (často označovaný jako cizí index), což výrazně zrychluje vyhledávání při operacích JOIN a kontrolách integrity.
+3. **Unikátní index (Unique Index)**: Inženýrsky nasazován s cílem zablokovat duplicitu nad jiným atributem, než kterým je primární klíč. Ideální využití je nad polem s e-mailem uživatelů u registračních formulářů. Strom Unique indexu bleskově hlídá vkládaná data a při detekci již existující hodnoty zruší operaci vyhozením chybové výjimky.
+4. **Obyčejný index (Secondary Index / Non-Clustered)**: Účelový strom na míru pro zrychlení frekventovaných datových operací čtení `SELECT` do klauzule `WHERE`. Typicky se nasazuje nad sloupcem `prijmeni_osoby`, pokud aplikace často vyhledává uživatele podle tohoto pole.
 
-Při inženýrských optimalizacích se využívá tzv. **Kompozitního klíče**. Primární či Obyčejný index nemusí být tvořen z hodnoty jednoho sloupce. Motor může zřetězit dva nebo více atributů dohromady (např. složit index nad sloupci `id_kurzu` a `id_studenta` v křižovatkové tabulce relace M:N) do jednoho celku a zajistit rychlé prohledávání napříč více podmínkami současně.
+Při inženýrských optimalizacích se využívá tzv. **Kompozitního klíče (Složeného klíče)**. Primární či Obyčejný index nemusí být tvořen z hodnoty jednoho sloupce. Motor může zřetězit dva nebo více atributů dohromady (např. složit index nad sloupci `id_kurzu` a `id_studenta` v křižovatkové tabulce relace M:N) do jednoho celku a zajistit rychlé prohledávání napříč více podmínkami současně.
+
+### Sdružený vs. Nesdružený index (Clustered vs. Non-Clustered Index)
+Z hlediska fyzického uložení dat na disku rozlišujeme dva základní typy indexů:
+- **Sdružený (Clustered) index**: Fyzicky organizuje a řadí samotná datová řádky tabulky na disku podle indexovaného klíče. Listové uzly sdruženého indexu obsahují přímo kompletní datové řádky tabulky. Protože fyzická data na disku mohou být seřazena pouze jedním způsobem, každá tabulka může mít **nejvýše jeden sdružený index** (zpravidla na primárním klíči).
+- **Nesdružený (Non-Clustered) index**: Má strukturu oddělenou od datových řádků. Listové uzly tohoto indexu obsahují pouze indexovanou hodnotu a ukazatel (pointer / RID / primární klíč) na skutečné umístění celého řádku v tabulce. Tabulka může mít **libovolný počet nesdružených indexů** (např. pro vyhledávání podle příjmení, data registrace apod.).
 
 ### Hardwarová daň za implementaci indexů
 Implementace indexů představuje v systémové architektuře klasický inženýrský kompromis (trade-off) mezi časem a prostorem (Time/Space tradeoff).
@@ -33,6 +42,7 @@ Zodpovědnost za správnost ukládaných dat nepadá jen na validační kontroly
 CREATE TABLE certifikovani_uzivatele (
     id_ucastnika INT AUTO_INCREMENT PRIMARY KEY,          -- Celočíselný limitovaný primární identifikátor klíčové zrychlené datové struktury a B+ strom k zamezení opomenutí do ID z RDBMS
     identifikacni_cislo VARCHAR(20) UNIQUE NOT NULL,      -- Kombinace omezení: Hodnota pole nevyhnutelně smí a nesmí chybět pro zadání a zároveň musí bezchybně propadnout indexovým stromem na duplicitu pro RČ klienta
+    prijmeni_osoby VARCHAR(80) NOT NULL,                  -- Sloupec s příjmením pro vyhledávání, nad kterým bude vytvořen sekundární index
     vek_v_registraci INT CHECK (vek_v_registraci >= 18),  -- Zajištění striktní limitace s validací v samotném jádře před provedením zapsání z hodnoty na pole k eliminaci osob s propadem omezujícího limitu na uložení k diskovému záznamu pole do DB
     datum_zalozeneho_uctu DATETIME DEFAULT CURRENT_TIMESTAMP -- Systematické generování k uložení stálého časového razítka propadem přes RTC serverovou techniku pro logování chodu z aplikací pro tabulkovou n-tici z OS
 );

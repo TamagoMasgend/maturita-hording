@@ -1,9 +1,13 @@
+---
+created: 2026-05-06T23:20
+updated: 2026-05-20T13:18
+---
 # 2. Architektura kontejnerů a tabulek v RDBMS
 
 Při inženýrském i vývojářském přístupu k modernímu RDBMS prostředí (Oracle, PostgreSQL, MS SQL Server, MySQL) a k manipulaci skrze jazyk SQL je klíčové exaktně pochopit architektonickou izolaci prvků. Administrátor musí striktně oddělovat zastřešující kontejner zvaný "Databáze", který izoluje systémy od sebe, od vnitřních logických datových entit ukrytých bezprostředně v ní (Tabulek).
 
 ## 1. Koncepce a systémová definice Databáze (Database)
-Na nejnižší úrovni z pohledu operačního systému serveru (linuxového jádra nebo OS Windows), se **Databáze** fyzicky na disku nerealizuje jako abstraktní koncept, nýbrž se ukládá jako zástup dedikovaných nestrukturovaných kompresních datových souborů (datafiles). Ty leží adresovány v kořenovém svazku úložiště a obsahují zkomprimované bloky (pages) operační paměti prohozené na disk. V masivně výkonných enterprise sálových počítačích u korporací dokonce databáze zabírá předdefinované, tzv. Raw alokované diskové oblasti – obchází klasický souborový subsystém OS (ext4, NTFS) a přímo řídí zápis bajtů na cylindry disku pro minimalizaci latence čtecí hlavičky.
+Na nejnižší úrovni z pohledu operačního systému serveru (linuxového jádra nebo OS Windows), se **Databáze** fyzicky na disku nerealizuje jako abstraktní koncept, nýbrž se ukládá jako zástup dedikovaných nestrukturovaných kompresních datových souborů (datafiles). Ty leží adresovány v kořenovém svazku úložiště a obsahují zkomprimované bloky (pages) operační paměti prohozené na disk. U vysoce výkonných podnikových systémů u velkých korporací dokonce databáze zabírá předdefinované, tzv. Raw alokované diskové oblasti – obchází klasický souborový subsystém OS (ext4, NTFS) a přímo řídí zápis bajtů na cylindry disku pro minimalizaci latence čtecí hlavičky.
 
 Z logického programátorského hlediska tvoří **databáze** uzel s tou nejvyšší prioritou pro rozdělení podnikové infrastruktury. Administrátor na jednom spuštěném SQL stroji běžně spravuje celou desítku izolovaných a rozparcelovaných "Databází". Databáze slouží jako nepřekročitelná bezpečnostní bublina s unikátními restriktivními přístupovými právy (ACL) pro různé skupiny aplikačních uživatelů.
 Běžně existuje architektura, kdy jedna instalace služby MySQL serveru obsahuje uvnitř nezávislou Databázi `HR_system` pro personální účetnictví. Hned vedle ní, v hierarchii zcela izolovaná, se nachází druhá Databáze `eshop_produkce` pro veřejný web. Data z obou databází nemohou jakkoli kolidovat a dotazy mezi nimi nelze míchat z jedné aplikační relace.
@@ -76,13 +80,13 @@ ALTER TABLE zamestnanci DROP COLUMN vek_narozeni;
 ALTER TABLE zamestnanci RENAME TO administrativni_pracovnici;
 ```
 
-### D. De-alokace obřích pamětí a hromadné smazání dat
-Vymazání nepoužívaných tabulkových uzlů si žádá rozeznávat ohromné a nevratné rozdíly v příkazech, které se liší podle zátěže na diskovém I/O a na logovacích souborech enginu. 
-U standardního příkazu `DELETE FROM` (z rodiny DML dotazů) se databáze trápí sekvenčním mazáním každého jednotlivého řádku do Undo-Logu pro případný Rollback, což trvá u milionů záznamů věčnost a zanechává fragmentaci. Pro efektivní vyčištění dat inženýři nasazují strukturu DDL operací.
+### D. De-alokace velkých datových objemů a hromadné smazání dat
+Vymazání nepoužívaných tabulkových uzlů vyžaduje porozumění zásadním a nevratným rozdílům v příkazech, které se liší zátěží na diskovém I/O a zápisy do logovacích souborů databázového stroje.
+U standardního příkazu `DELETE FROM` (z rodiny DML dotazů) databáze provádí sekvenční mazání každého jednotlivého řádku s postupným zápisem do Undo-Logu pro případný Rollback. To může u velkého množství záznamů trvat neúměrně dlouho a způsobit diskovou fragmentaci. Pro efektivní vyčištění dat vývojáři nasazují příkazy z rodiny DDL.
 
 ```sql
 -- DDL Operátor ničící natrvalo absolutně veškeré přidělené místo, zavedené omezující logiky, indexové diskové stromy B+Tree pro prohledávání. 
--- Souběžně maže všechny uchovávané uživatelské řádkové n-tice se sesbíranými daty. Odkaz z klientské aplikace následně padá syntaktickou chybou neexistující tabulky.
+-- Souběžně maže všechny uchovávané uživatelské řádkové n-tice se sesbíranými daty. Následné dotazy z klientské aplikace selžou s chybou neexistující tabulky.
 DROP TABLE administrativni_pracovnici;
 
 -- Ultimátní inženýrský příkaz databázových strojů spadající pod DDL, koncipovaný pro softwarově optimalizovaný obchvat (bypass) proti těžkému logování na pevném disku. 

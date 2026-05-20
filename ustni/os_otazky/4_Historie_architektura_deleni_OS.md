@@ -1,42 +1,61 @@
+---
+created: 2026-05-06T11:11
+updated: 2026-05-20T13:00
+---
 # 4. Historie operačních systémů, jejich architektura a dělení
 
 Operační systém (OS) je základní vrstva systémového softwaru, která tvoří rozhraní mezi hardwarem a aplikačními programy. Jeho účelem je efektivně spravovat a abstrahovat fyzické zdroje (CPU, RAM, disky, I/O periferie) a poskytovat standardizované API pro aplikace.
 
 ## Historie OS Unix a Linux
-Vývoj unixových systémů položil základy pro moderní správu procesů a zabezpečení.
-- **Předchůdce a vznik UNIXu**: V 60. letech se v laboratořích Bell Labs, MIT a GE vyvíjel rozsáhlý systém *Multics*. Pro svou přebujelost byl opuštěn. Inženýři Ken Thompson a Dennis Ritchie (Bell Labs) z něj v roce 1969 abstrahovali jednodušší a elegantnější systém – **UNIX**. Byl přepsán do nízkoúrovňového jazyka C, což znamenalo historický zlom: systém se stal přenositelným (překompilovatelným) na různé hardwarové architektury.
-- **Filozofie UNIXu**: "Všechno je soubor" (včetně hardwaru mapovaného do adresáře `/dev`). Úzce zaměřené nástroje, které dělají jednu věc a dělají ji dobře, přičemž jsou spojovány přes roury (Pipes).
-- **Zrod Linuxu**: Počátkem 90. let existoval projekt GNU (vytvořený Richardem Stallmanem), který dodal svobodné unixové nástroje a kompilátory, avšak chybělo mu funkční jádro (kernel). V roce 1991 student **Linus Torvalds** napsal a pod svobodnou licencí GNU GPL zveřejnil jádro **Linux**. Spojením GNU nástrojů a Linuxového jádra vznikl plnohodnotný svobodný operační systém (GNU/Linux). Dnes je dominantní platformou drtivé většiny internetových serverů, superpočítačů a smartphonů (Android je postaven na modifikovaném jádře Linuxu).
+Vývoj unixových systémů položil základy pro moderní správu procesů, víceuživatelské systémy a síťovou komunikaci.
+- **Vznik UNIXu (1969)**: V 60. letech se v laboratořích Bell Labs, MIT a General Electric vyvíjel ambiciózní, ale přebujelý systém *Multics*. Pro svou neefektivitu byl opuštěn, což motivovalo inženýry **Kena Thompsona** a **Dennise Ritchieho** (Bell Labs), aby vytvořili jednodušší a elegantnější systém – **UNIX**. Zásadním zlomem bylo přepsání UNIXu do nově vyvinutého programovacího jazyka **C** (1973). Tím se systém odpoutal od konkrétního hardwaru a stal se přenositelným na jiné procesorové architektury.
+- **Větvení UNIXu**: Postupně vznikly dvě hlavní vývojové větve: komerční **System V** od AT&T a akademická **BSD** (Berkeley Software Distribution). Kvůli licenčním sporům o značku UNIX vznikla snaha o sjednocení a standardizaci rozhraní, což vyústilo v normu **POSIX** (Portable Operating System Interface), kterou dnes splňují všechny unixové systémy.
+- **GNU Projekt (1983)**: **Richard Stallman** založil projekt GNU s cílem vytvořit kompletně svobodný unixový operační systém. Vyvinul klíčové nástroje (kompilátor GCC, knihovnu glibc, textové editory), ale chybělo jim funkční jádro (GNU Hurd).
+- **Zrod Linuxu (1991)**: Finský student **Linus Torvalds** začal na architektuře Intel 386 psát vlastní jádro inspirované systémem MINIX. V roce 1991 zveřejnil zdrojový kód jádra **Linux** pod svobodnou licencí GNU GPL. Spojením GNU uživatelských nástrojů a Linuxového jádra vznikl plnohodnotný operační systém **GNU/Linux**. Ten se díky své stabilitě, bezpečnosti a otevřenosti stal dominantní platformou pro servery, cloudovou infrastrukturu, superpočítače a mobilní zařízení (Android využívá upravené jádro Linuxu).
 
 ## Historie OS Windows
-Zatímco Unix cílil na velké akademické sálové počítače, Microsoft ovládl trh osobních mikropočítačů (PC).
-- **Éra MS-DOS (1981)**: Microsoft odkoupil systém QDOS, upravil jej a licencoval IBM pod názvem MS-DOS. Šlo o 16bitový, jednouživatelský (single-user) a jednonitný (single-tasking) systém s výhradně textovým rozhraním (CLI).
-- **Nadstavby nad DOSem (Windows 1.0 až Windows 98/ME)**: Rané verze Windows (začínající rokem 1985) nebyly skutečnými operačními systémy, ale pouze 16bitovými a později 32bitovými grafickými nadstavbami (GUI) běžícími nad vrstvou MS-DOS. Vyznačovaly se tristní stabilitou, jelikož aplikace měly přímý přístup k hardwaru a využívaly nespolehlivý kooperativní multitasking.
-- **Rodina Windows NT (New Technology)**: Zcela nová, paralelně vyvíjená větev systému od roku 1993, napsaná pro byznys a servery s důrazem na absolutní stabilitu a bezpečnost. Jádro bylo zcela přepsáno na preemptivní multitasking a plnou izolaci paměti procesů od hardwaru. Počínaje systémem **Windows XP** (a u moderních Windows 10/11) Microsoft definitivně odřízl starý MS-DOS a veškeré dnešní systémy Windows fungují exkluzivně na vyspělém jádře architektury NT.
+Microsoft cílil primárně na trh osobních mikropočítačů (PC), kde postupně vystřídal několik architektur.
+- **Éra MS-DOS (1981)**: Microsoft odkoupil systém QDOS (Quick and Dirty OS), upravil jej a pod názvem MS-DOS (Microsoft Disk Operating System) licencoval firmě IBM pro její první osobní počítače IBM PC. MS-DOS byl 16bitový, jednouživatelský (single-user) a jednonitný (single-tasking) systém ovládán výhradně z příkazové řádky. Neměl žádnou ochranu paměti – pád programu znamenal pád celého počítače.
+- **Grafické nadstavby Windows 1.0 až 98/ME**: V roce 1985 vydal Microsoft první grafické rozhraní **Windows 1.0**. Verze Windows 1.x, 2.x, 3.x a následná řada Windows 9x (Windows 95, 98, ME) nebyly samostatnými operačními systémy v moderním slova smyslu, ale pouze 16/32bitovými grafickými nadstavbami spouštěnými nad vrstvou MS-DOS. Trpěly nízkou stabilitou kvůli kooperativnímu multitaskingu a chybějící izolaci paměti aplikací.
+- **Architektura Windows NT (New Technology)**: Paralelně s řadou 9x vyvíjel Microsoft od roku 1993 zcela nový systém určený pro podnikové nasazení a servery. Tým vedený **Davem Cutlerem** navrhl moderní 32bitové (později 64bitové) preemptivní jádro s hardwarovou abstrakcí (HAL) a plnou izolací paměti. Prvním systémem pro běžné spotřebitele postaveným na tomto jádře byly **Windows XP** (2001). Všechny současné verze (Windows 10, 11, Windows Server) fungují výhradně na jádře řady Windows NT.
 
 ## Obvyklá struktura OS (Architektura)
-Moderní operační systémy využívají k ochraně před zhroucením striktní vrstvený model paměti a oprávnění, hardwarově podporovaný procesory (tzv. Protection Rings). Celý výpočetní prostor se dělí na dvě izolované sféry: **Kernel Space** (prostor jádra) a **User Space** (uživatelský prostor).
+Moderní operační systémy využívají k ochraně před destabilizací a neautorizovaným přístupem k hardwaru hardwarově podporovaný model privilegií procesoru, známý jako **Protection Rings** (ochranné prstence). Většina architektur implementuje dva základní režimy:
+- **Kernel Mode (Privilegovaný režim / Ring 0)**: Režim s neomezeným přístupem k instrukcím CPU a fyzické paměti RAM. Běží v něm samotné jádro (kernel) a kritické ovladače.
+- **User Mode (Neprivilegovaný režim / Ring 3)**: Režim s omezenými instrukcemi, ve kterém běží běžné uživatelské aplikace, grafické prostředí a uživatelské knihovny. Aplikace mají zakázáno přistupovat přímo k hardwaru nebo paměti jiných procesů.
 
-1. **Jádro (Kernel)**: Centrální výpočetní a řídící komponenta operačního systému běžící v nejvyšším stupni oprávnění (Ring 0). Má přímý, nelimitovaný přístup ke všem fyzickým zdrojům (RAM, CPU instrukce). Stará se o kritické operace:
-   - **Plánovač procesů (Scheduler)**: Přiděluje časová okna CPU procesům (např. algoritmus CFS v Linuxu).
-   - **Správa paměti (Memory Management / Paging)**: Přiděluje virtuální paměť a řeší stránkování do SWAPu.
-   - **Správa souborového systému (VFS)**: Zajišťuje I/O operace na pevných discích.
-2. **Ovladače zařízení (Device Drivers)**: Často tvoří součást jádra nebo vrstvu zvanou **HAL** (Hardware Abstraction Layer). Překládají obecné příkazy jádra (např. "přečti sektor") na specifické elektrické instrukce pro konkrétní hardware konkrétního výrobce.
-3. **Systémová API a Knihovny**: Rozhraní (v Linuxu `glibc`, ve Windows moduly `Win32 API`), které tvoří most. Bezpečnostní izolace totiž neumožňuje, aby si běžná aplikace z User Space sáhla přímo do paměti hardwaru. Musí provést tzv. **System Call** (systémové volání) a požádat jádro, aby danou akci provedlo za ni.
-4. **Shell a Uživatelské rozhraní**: Nejsvrchnější vrstva. Představuje tlumočníka mezi uživatelem a systémovými knihovnami. Může mít grafickou podobu (GUI - např. Windows Explorer, KDE/GNOME v Linuxu) nebo textovou podobu (CLI - např. Bash, PowerShell). Běží ve striktně omezeném User Space (Ring 3) – pokud zde aplikace zkolabuje, stáhne sebou jen sama sebe, nikoliv celé jádro.
+### Architektonické vrstvy operačního systému:
+1. **Hardware**: Fyzické komponenty počítače (CPU, RAM, disky, síťové karty).
+2. **Jádro (Kernel)**: Centrální komponenta OS běžící v Ring 0. Zajišťuje:
+   - **Plánovač procesů (Scheduler)**: Rozděluje čas procesoru (CPU) mezi jednotlivá vlákna a procesy.
+   - **Správa paměti**: Mapuje virtuální paměť procesů na fyzickou paměť RAM a spravuje stránkování (Paging).
+   - **Správa souborového systému**: Poskytuje abstrakci souborů a adresářů nad fyzickými bloky disku.
+3. **Ovladače zařízení (Device Drivers)**: Moduly, které překládají standardizované požadavky jádra na nízkoúrovňové signály konkrétního hardwaru. Často běží na rozhraní **HAL** (Hardware Abstraction Layer), které maskuje rozdíly mezi různými základními deskami a procesory.
+4. **Systémová API a Knihovny**: Rozhraní pro vývojáře aplikací (např. knihovna `glibc` v Linuxu, moduly `Win32 API` ve Windows). Tvoří most mezi uživatelským prostorem a jádrem.
+5. **System Call Interface (Rozhraní systémových volání)**: Kdykoliv aplikace v User Mode potřebuje provést privilegovanou operaci (např. zapsat soubor na disk nebo odeslat síťový paket), musí provést tzv. **System Call** (systémové volání). Tím vyvolá softwarové přerušení (interrupt), procesor bezpečně přepne z Ring 3 do Ring 0, předá řízení jádru, to operaci provede, přepne se zpět do Ring 3 a vrátí výsledek aplikaci.
+6. **Uživatelské rozhraní (Shell / GUI)**: Nejsvrchnější vrstva v User Mode (např. Bash v Linuxu, Explorer.exe ve Windows), která umožňuje uživateli zadávat příkazy a spouštět programy. Pád shellu neohrozí běžící jádro ani ostatní procesy.
 
-## Dělení OS podle inženýrských charakteristik
-Operační systémy lze striktně klasifikovat podle způsobu, jakým rozdělují výpočetní čas a strukturují své jádro.
+## Dělení OS podle různých kritérií
+Operační systémy lze klasifikovat podle několika základních inženýrských a uživatelských charakteristik.
 
 ### 1. Podle architektury jádra (Kernel Design)
-- **Monolitické jádro**: Celý operační systém (správa procesů, paměti, souborového systému i ovladače grafiky a síťovek) je zkompilován do jediné obrovské binárky a běží společně v nejvyšším stupni oprávnění (Kernel Space). Výhodou je extrémní rychlost, jelikož podsystémy komunikují přímo v jedné paměti bez režie. Zásadní nevýhodou je bezpečnost – pád jednoho ovladače do nekonečné smyčky zhroutí celý systém (tzv. Kernel Panic / BSOD). Typický představitel: **Linux**.
-- **Mikrojádro (Microkernel)**: Osekává kód v Kernel Space na absolutní fyzikální minimum (pouze nejnižší správa paměti, CPU a zajištění meziprocesové komunikace - IPC). Všechno ostatní (souborový systém, ovladače zařízení, síťový zásobník) běží jako izolované uživatelské procesy (v User Space). Pokud spadne ovladač síťové karty, jádro to neovlivní, systém nespadne a démon se pouze tiše restartuje. Nevýhodou je rozsáhlý režie na zasílání zpráv (IPC) mezi prostory, což systém zpomaluje. Představitelé: QNX, moderní vývojové větve macOS/iOS.
+- **Monolitické jádro**: Celý operační systém (správa procesů, paměti, souborového systému i ovladače) je zkompilován do jediné obrovské binárky a běží společně v Kernel Space (Ring 0). Výhodou je extrémní rychlost díky přímému volání funkcí bez režie. Nevýhodou je, že chyba v jedné části (např. pád ovladače) způsobí kolaps celého systému (BSOD, Kernel Panic). Zástupce: **Linux**.
+- **Mikrojádro (Microkernel)**: Osekává kód v Kernel Space na absolutní minimum (pouze IPC - meziprocesová komunikace, správa paměti a plánování CPU). Vše ostatní (ovladače, souborový systém) běží jako běžné procesy v User Space (Ring 3). Pád ovladače neohrozí jádro (pouze se restartuje příslušná služba), nevýhodou je však režie při komunikaci (IPC) a tím nižší rychlost. Zástupci: **QNX**, **MINIX**.
+- **Hybridní jádro**: Kombinace monolitického a mikrojádra. Jádro je modulární a strukturované, ale z výkonnostních důvodů běží klíčové podsystémy (včetně grafiky a ovladačů) v Kernel Space. Zástupci: **Windows NT** (jádro Windows 10/11), jádro **XNU** (použité v macOS a iOS, kombinuje mikrojádro Mach a součásti BSD UNIXu).
 
-### 2. Podle schopnosti multitaskingu
-- **Single-tasking**: Systém dokáže v jednu chvíli zpracovávat pouze jediný proces. Dokud se program neukončí, nepustí k CPU nic jiného. Typicky historický **MS-DOS**.
-- **Multitasking (Kooperativní)**: Systém spustí více aplikací, ale ty se musí samy programově a dobrovolně vzdávat procesorového času, aby pustily ke slovu ostatní. Stačí chyba programátora jedné aplikace a celý OS "zamrzne". Známé z raných Windows 3.1 / 95.
-- **Multitasking (Preemptivní)**: Absolutní vládu nad hardwarem přebírá procesorový plánovač v jádře OS. Sám a nemilosrdně přiděluje i odebírá procesům časová okna (řádově v milisekundách) pomocí hardwarových přerušení, čímž vytváří iluzi plynulého paralelního běhu. Pád jakkoliv špatně napsané aplikace nedokáže systém zablokovat. Průmyslový standard pro Windows NT a Linux.
+### 2. Podle počtu uživatelů
+- **Jednouživatelské (Single-user)**: V jednom okamžiku smí se systémem pracovat pouze jeden uživatel a existuje pouze jeden uživatelský profil. Příklad: **MS-DOS**, rané verze Windows (95, 98).
+- **Víceuživatelské (Multi-user)**: Systém podporuje současnou práci více uživatelů (např. přes vzdálené terminály SSH, RDP) a zajišťuje striktní izolaci jejich dat a oprávnění. Příklad: **Linux**, **Windows NT** a moderní Windows (10, 11).
 
-### 3. Podle reakční doby (Determinismu)
-- **Time-Sharing OS (OS s dělením času)**: Běžné systémy (Windows, Linux, macOS). Cílem je poskytnout zhruba stejný a férový výpočetní čas všem aplikacím uživatele pro maximalizaci agregované propustnosti. Pokud dojde k lokální zátěži, systém se na sekundu zadrhne (zpoždění/latence), což u myši či webu nevadí.
-- **RTOS (Real-Time Operating System)**: Systémy nasazované v medicíně (kardiostimulátory), průmyslové robotice, letectví nebo armádě. Zde nezáleží na celkové propustnosti, ale na **tvrdém determinismu**. Systém matematicky garantuje, že na konkrétní vstupní signál odpoví v předem garantovaném okně (např. do 2 milisekund) a nikdy toto zpoždění nepřekročí, jinak by u kardiostimulátoru či brzd automobilu došlo k fatálnímu ohrožení života. Typický představitel: QNX, VxWorks, FreeRTOS.
+### 3. Podle schopnosti multitaskingu
+- **Single-tasking**: Systém dokáže v jeden moment zpracovávat pouze jediný běžící proces. Dokud se program neukončí, nepustí k CPU nic jiného. Typicky **MS-DOS**.
+- **Kooperativní multitasking**: Systém umožňuje spuštění více aplikací současně, ale ty se musí samy a dobrovolně vzdávat procesorového času a předávat jej dalším. Chyba v jedné aplikaci (zacyklení) způsobí zamrznutí celého OS. Příklad: **Windows 3.1 / 95**, starý Mac OS.
+- **Preemptivní multitasking**: Jádro operačního systému (plánovač) plně ovládá přidělování CPU. Sám odebírá výpočetní čas procesům na základě priorit a časových kvant pomocí hardwarových přerušení. Pád aplikace neohrozí chod ostatních programů ani systému. Standard u **Windows NT**, **Linuxu** a macOS.
+
+### 4. Podle reakční doby (Determinismu)
+- **Time-Sharing OS (Dělení času)**: Běžné operační systémy (Windows, Linux, macOS). Cílem plánovače je rozdělit výkon spravedlivě mezi všechny aplikace tak, aby byla zajištěna plynulá odezva pro uživatele. Občasné zpoždění (latence) při zátěži nevadí.
+- **RTOS (Real-Time OS / Operační systémy reálného času)**: Nasazované v kritických systémech (medicína, letectví, automobilový průmysl). Klíčový je **determinismus** – systém matematicky garantuje, že na konkrétní podnět odpoví v přesně stanoveném časovém limitu (např. v řádu mikrosekund), jinak hrozí havárie či ohrožení života. Zástupci: **QNX**, **VxWorks**, **FreeRTOS**.
+
+### 5. Podle licenčního modelu a otevřenosti kódu
+- **Proprietární (Uzavřené)**: Kód je chráněn autorským právem, binární kód je distribuován komerčně a uživatelé nemají přístup ke zdrojovému kódu. Příklad: **MS Windows**, **macOS**.
+- **Open-source (Otevřené)**: Zdrojový kód je volně dostupný pod licencemi (např. GNU GPL, MIT, BSD), které umožňují kód prohlížet, upravovat, šířit a využívat zdarma. Příklad: **Linux (jádro a distribuce)**, **FreeBSD**.

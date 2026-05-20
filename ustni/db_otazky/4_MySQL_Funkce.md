@@ -1,3 +1,7 @@
+---
+created: 2026-05-06T23:20
+updated: 2026-05-20T13:18
+---
 # 4. Architektura a implementace vestavěných funkcí v MySQL
 
 Zpracování surových dat v relačních databázových systémech (RDBMS) nevyžaduje vždy jejich kompletní přesun po síti do aplikační vrstvy (např. do Pythonu nebo PHP) za účelem výpočtu. Tento tradiční přesun by u milionů záznamů způsobil kolaps síťové propustnosti a neúměrné zatížení paměti RAM na straně klienta. RDBMS systémy, jakým je MySQL, proto disponují mohutným, v jazyce C nativně zkompilovaným aparátem **Vestavěných funkcí (Built-in Functions)**. Tyto funkce běží v nejnižší vrstvě databázového motoru, operují přímo nad bloky na disku či v systémové cache a vrací přes síť zpět klientovi již pouze konečný vypočítaný výsledek (často jediný bajt).
@@ -48,7 +52,7 @@ SELECT UPPER(CONCAT(jmeno, ' ', prijmeni)) AS formatovane_jmeno FROM klienti;
 SELECT DATEDIFF(NOW(), termin_splatnosti) AS 'Dny_po_splatnosti' FROM seznam_faktur;
 ```
 
-## Agregační funkce: Matematická redukce rozsáhlý datových sad
+## Agregační funkce: Matematická redukce rozsáhlých datových sad
 Kritický protipól k řádkovým funkcím. Agregační algoritmy neshromažďují data izolovaně na jedné n-tici, nýbrž převezmou celý alokovaný sloupec z milionu vyfiltrovaných řádků naráz, spustí nad ním sekvenční výpočetní cyklus uvnitř registru CPU a výsledný výpočet zkomprimují do **přesně jedné jediné návratové hodnoty**. Redukují tak stovky megabajtů dat na pár bajtů odpovědi.
 
 - **`COUNT(sloupec)`**: Slouží k secvičení celkového počtu nalezených a platných řádků. Variantní zápis `COUNT(*)` počítá fyzické řádky bez ohledu na to, zda jsou vnitřní buňky prázdné (`NULL`), kdežto `COUNT(nazev_sloupce)` ignoruje řádky, kde v zadaném sloupci hodnota chybí.

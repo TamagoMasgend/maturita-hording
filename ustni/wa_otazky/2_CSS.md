@@ -1,3 +1,7 @@
+---
+created: 2026-05-06T23:20
+updated: 2026-05-20T13:03
+---
 # 2. Kaskádové styly (CSS)
 
 ## Koncept a účel CSS ve webovém inženýrství
@@ -11,7 +15,7 @@ Hlavním a absolutním inženýrským přínosem CSS je **oddělení struktury (
 Pochopení principu CSS vyžaduje znalost, jak prohlížeč (např. jádro Blink v Chrome nebo WebKit v Safari) transformuje kód na pixely.
 
 1. Prohlížeč stáhne CSS soubor a spustí vlastní lexikální parser, který ze selektorů a pravidel sestaví v operační paměti strukturu zvanou **CSSOM (CSS Object Model)**.
-2. V další fázi engin spojí strukturální strom HTML (**DOM**) s pravidly formátování (**CSSOM**) a vytvoří tzv. **Render Tree**. Tento finální strom obsahuje již pouze ty prvky, které budou reálně viditelné na obrazovce (elementy skryté pravidlem `display: none` jsou v této fázi zahnány a do Render Tree nevstupují).
+2. V další fázi engin spojí strukturální strom HTML (**DOM**) s pravidly formátování (**CSSOM**) a vytvoří tzv. **Render Tree**. Tento finální strom obsahuje již pouze ty prvky, které budou reálně viditelné na obrazovce (elementy skryté pravidlem `display: none` jsou z Render Tree vynechány).
 3. Na Render Tree se aplikuje proces **Layout (nebo Reflow)**, kdy se matematicky vypočítá přesná geometrie – X/Y souřadnice a šířka/výška boxů pro každý prvek na monitoru.
 4. V závěrečném kroku **Paint** posílá prohlížeč instrukce grafické kartě (GPU), aby vypočítané geometrické obdélníky vyplnila konkrétními barvami, stíny a textem.
 
@@ -22,14 +26,14 @@ Termín "Kaskádové" označuje přísný deterministický algoritmus, kterým e
 CSS je otevřený standard vyvíjený konsorciem **W3C (World Wide Web Consortium)**.
 
 - Historicky vznikly monolitické standardy CSS 1 (v roce 1996) a CSS 2 (v roce 1998).
-- Aktuálním platným standardem je **CSS3**. Inženýři z W3C zcela opustili dřívější koncept "velkých vydání" a CSS3 rozštěpili do desítek nezávisle vyvíjených specifikací (Modulů) – existuje tak například nezávislý _CSS Color Module_, _CSS Animations_, nebo _CSS Grid Layout_. Díky modularizaci mohou tvůrci prohlížečů implementovat nové technologie okamžitě po dokončení a odladění konkrétního modulu, aniž by se muselo roky čekat na schválení rozsáhlý balíku celého jazyka.
+- Aktuálním platným standardem je **CSS3**. Inženýři z W3C zcela opustili dřívější koncept "velkých vydání" a CSS3 rozštěpili do desítek nezávisle vyvíjených specifikací (Modulů) – existuje tak například nezávislý _CSS Color Module_, _CSS Animations_, nebo _CSS Grid Layout_. Díky modularizaci mohou tvůrci prohlížečů implementovat nové technologie okamžitě po dokončení a odladění konkrétního modulu, aniž by se muselo roky čekat na schválení rozsáhlého balíku celého jazyka.
 
 ## Metody zápisu a napojení do HTML dokumentu
 
 Z inženýrského a architektonického hlediska (Clean Code) se formátovací pravidla dají do HTML dokumentu vpravit třemi naprosto izolovanými způsoby.
 
 1. **Inline styl (Přímý zápis do značky - Antipattern)**:
-   Pravidla se píší přímo do hodnoty HTML atributu `style` uvnitř otevíracího tagu. Tento přístup má ze všech nejvyšší výpočetní prioritu (přebije většinu ostatních zápisů), ale brutálně porušuje fundamentální princip oddělení obsahu od vzhledu. Zcela znemožňuje jakoukoliv hromadnou správu, protože při změně barvy musíte najít a přepsat kód na tisíci místech ručně.
+   Pravidla se píší přímo do hodnoty HTML atributu `style` uvnitř otevíracího tagu. Tento přístup má ze všech nejvyšší výpočetní prioritu (přebije většinu ostatních zápisů), ale zcela porušuje fundamentální princip oddělení obsahu od vzhledu. Zcela znemožňuje jakoukoliv hromadnou správu, protože při změně barvy musíte najít a přepsat kód na tisíci místech ručně.
 
    ```html
    <!-- Tvrdé definování vzhledu bez možnosti snadné změny napříč webem -->
@@ -54,7 +58,7 @@ Z inženýrského a architektonického hlediska (Clean Code) se formátovací pr
    ```
 
 3. **External styl (Externí souborový odkaz - Průmyslový standard)**:
-   Jediné správné, vysoce škálovatelné řešení. Všechna CSS pravidla leží ve zcela nezávislém textovém souboru s příponou `.css`. HTML dokument tento soubor pouze načítá z hlavičky pomocí nepárového tagu `<link>`. Výhoda neleží jen ve snadné správě kódu (upravím soubor na serveru a změní se vizuál milionu podstránek), ale hlavně v infrastruktuře sítě. Prohlížeč si externí `.css` soubor stáhne jen při prvním načtení a uloží si ho do lokální mezipaměti (Cache). U každého dalšího kliknutí napříč webem se formátování bere z lokálního disku klienta, čímž se drasticky snižuje síťová zátěž (Bandwidth) i zatížení procesoru serveru.
+   Jediné správné, vysoce škálovatelné řešení. Všechna CSS pravidla leží ve zcela nezávislém textovém souboru s příponou `.css`. HTML dokument tento soubor pouze načítá z hlavičky pomocí nepárového tagu `<link>`. Výhoda neleží jen ve snadné správě kódu (upravím soubor na serveru a změní se vizuál milionu podstránek), ale hlavně v infrastruktuře sítě. Prohlížeč si externí `.css` soubor stáhne jen při prvním načtení a uloží si ho do lokální mezipaměti (Cache). U každého dalšího kliknutí napříč webem se formátování načítá přímo z lokálního disku klienta. Díky tomu se drasticky snižuje síťová zátěž (Bandwidth) i zatížení procesoru serveru.
 
    ```html
    <head>
@@ -70,7 +74,7 @@ Aby jazyk CSS věděl, na který konkrétní HTML uzel v DOM stromu má pravidla
    Aplikuje formátování plošně a nekompromisně na naprosto každý element v DOM stromu. Z výkonnostního hlediska velmi náročný. Typicky se užívá hned na prvním řádku souboru k provedení tzv. "CSS Resetu" – zrušení výchozích prohlížečových okrajů, které by jinak rozhodily matematický výpočet šířky.
 2. **Typový / Elementový selektor**:
    Cílí plošně na všechny uzly podle jejich systémového názvu HTML tagu.
-   - `h1 { color: #333333; font-weight: bold; }` (Obarví všechny nadpisy proní úrovně tmavě šedou).
+   - `h1 { color: #333333; font-weight: bold; }` (Obarví všechny nadpisy první úrovně tmavě šedou).
 3. **Selektor Třídy (Class selector začínající znakem `.` )**:
    Třída je opakovatelně použitelný identifikátor a základní stavební blok pro tvorbu design systémů (např. Bootstrap). Jeden element může v HTML nést více tříd (oddělených mezerou) a jedna třída může být napříč projektem definována pro tisíce různých elementů.
    - `.tlacitko-error { background-color: red; color: white; }` (Aplikováno přes HTML parametr `<button class="tlacitko-error">`).
@@ -83,7 +87,7 @@ Aby jazyk CSS věděl, na který konkrétní HTML uzel v DOM stromu má pravidla
 6. **Pseudotřídy (`:`) a Pseudoelementy (`::`)**:
    Nezaměřují se primárně na statický HTML element jako takový, ale zachytávají jeho interaktivní, dynamický **stav** v paměti RAM (např. po interakci s myší), nebo vybírají logické virtuální podčásti elementu.
    - `a:hover { text-decoration: underline; color: blue; }` (Aktivuje podtržení výhradně v čase, kdy nad logickou oblast odkazu najede kurzor myši uživatele).
-   - `p::first-line { font-weight: bold; }` (Udělá tučným písmem pouze první vyrenderovanou řádku odstavce, a to i když uživatel velikost okna manuálně zmenšuje a text dynamicky přetéká na další řádky).
+   - `p::first-line { font-weight: bold; }` (Udělá tučným písmem pouze první vyrenderovaný řádek odstavce, a to i když uživatel velikost okna manuálně zmenšuje a text dynamicky přetéká na další řádky).
 
 ## Praktická ukázka moderního uspořádání
 
